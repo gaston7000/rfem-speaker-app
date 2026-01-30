@@ -1,77 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<title>RFEM Speaker App</title>
+<meta charset="UTF-8">
+<title>RFEM Speaker PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 body {
-  font-family: system-ui, sans-serif;
-  background: #0b1320;
-  color: white;
   margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: 
+    linear-gradient(rgba(5,10,25,0.85), rgba(5,10,25,0.85)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80");
+  background-size: cover;
+  background-attachment: fixed;
+  color: white;
 }
 
 header {
-  background: #101c36;
-  padding: 10px;
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 14px;
+  justify-content: center;
+  background: rgba(5,10,25,0.7);
+  backdrop-filter: blur(8px);
 }
 
 button {
-  background: #1e3a8a;
+  background: #00d1ff;
   border: none;
-  padding: 10px 14px;
-  color: white;
-  border-radius: 10px;
+  padding: 16px 22px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 14px;
   cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
 }
 
 button:hover {
-  background: #2563eb;
+  transform: scale(1.05);
+  background: #00b4dd;
 }
 
-#grid {
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  margin: 20px;
+  letter-spacing: 1px;
+}
+
+.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
-  padding: 10px;
+  gap: 16px;
+  padding: 20px;
 }
 
 .card {
-  background: #111827;
-  border-radius: 12px;
-  padding: 10px;
+  background: rgba(20,30,60,0.9);
+  border-radius: 20px;
+  padding: 14px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: scale(1.05);
 }
 
 .en-pista {
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 20px #00ff00;
+  border: 4px solid #00ff00;
+  box-shadow: 0 0 25px #00ff00;
+}
+
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.dorsal {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.categoria {
+  padding: 6px 12px;
+  border-radius: 10px;
+  display: inline-block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5,10,25,0.95);
+  display: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.overlay h2 {
+  text-align: center;
 }
 
 input, select {
   width: 100%;
-  margin-bottom: 6px;
-  padding: 6px;
-  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
   border: none;
+  font-size: 16px;
 }
 
-#logos {
+.footer {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 40px;
   padding: 20px;
-  background: #020617;
+  background: rgba(0,0,0,0.6);
 }
 
-#logos img {
+.footer img {
   height: 60px;
   opacity: 0.85;
+  transition: transform 0.2s;
+}
+
+.footer img:hover {
+  transform: scale(1.1);
 }
 </style>
 </head>
@@ -79,180 +146,253 @@ input, select {
 <body>
 
 <header>
-  <button onclick="nuevoCompetidor()">➕ Competidor</button>
-  <button onclick="importarPDF()">🌐 Importar PDF RFEM</button>
-  <button onclick="pantallaPublico()">📺 Público</button>
+  <button onclick="mostrarFormulario()">➕ Nuevo Competidor</button>
+  <button onclick="importarPDF()">📄 Importar RFEM (2005–2024)</button>
+  <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="pantallaPublico()">📺 Pantalla Público</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
   <button onclick="importarBackup()">☁️ Restaurar</button>
 </header>
 
-<div id="grid"></div>
+<h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
+<div class="grid" id="gridPista"></div>
 
-<div id="logos">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Real_Federacion_Espanola_de_Motonautica_logo.png">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Federacion_Andaluza_de_Motonautica_logo.png">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/UIM_logo.png">
-  <img src="https://gastoniglesias.com/logo.png">
+<h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
+<div class="grid" id="grid"></div>
+
+<!-- FORMULARIO COMPETIDOR -->
+<div id="formulario" class="overlay">
+  <button onclick="cerrarFormulario()">⬅ Volver a Inicio</button>
+  <h2>Nuevo Competidor</h2>
+
+  <input id="n-nombre" placeholder="Nombre completo">
+  <input id="n-dorsal" placeholder="Dorsal">
+  <input id="n-categoria" placeholder="Categoría (GP2, GT60, etc)">
+  <select id="n-tipo">
+    <option>Motos de agua</option>
+    <option>Barcos</option>
+  </select>
+  <input id="n-club" placeholder="Club">
+  <input id="n-embarcacion" placeholder="Marca y modelo de embarcación">
+  <input type="file" id="n-foto" accept="image/*">
+
+  <button onclick="guardarCompetidor()">💾 Guardar</button>
+</div>
+
+<!-- FICHA -->
+<div id="ficha" class="overlay">
+  <button onclick="cerrarFicha()">⬅ Volver a Inicio</button>
+  <h2 id="f-nombre"></h2>
+
+  <p id="f-dorsal"></p>
+  <p id="f-categoria"></p>
+  <p id="f-tipo"></p>
+  <p id="f-club"></p>
+  <p id="f-embarcacion"></p>
+
+  <button onclick="toggleEnPista()">🎮 En Pista</button>
+  <button onclick="enlazarFamiliar()">👨‍👩‍👧‍👦 Enlazar Familiar</button>
+
+  <h3>🏁 Resultados</h3>
+  <div id="f-resultados"></div>
+  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado</button>
+</div>
+
+<!-- RESULTADO -->
+<div id="resultadoForm" class="overlay">
+  <button onclick="cerrarResultadoForm()">⬅ Volver a Ficha</button>
+  <h2>Nuevo Resultado</h2>
+
+  <input id="r-anio" placeholder="Año (2005–2024)">
+  <input id="r-competicion" placeholder="Competición">
+  <input id="r-puesto" placeholder="Puesto">
+  <input id="r-tiempo" placeholder="Tiempo">
+  <input id="r-puntos" placeholder="Puntos">
+  <input id="r-sanciones" placeholder="Sanciones">
+
+  <button onclick="guardarResultado()">💾 Guardar Resultado</button>
+</div>
+
+<!-- FOOTER LOGOS -->
+<div class="footer">
+  <img src="logo-gaston.png" alt="Gaston Iglesias Sport Marketing">
+  <img src="logo-rfem.png" alt="RFEM">
+  <img src="logo-andalucia.png" alt="Federación Andaluza Motonáutica">
+  <img src="logo-uim.png" alt="UIM">
 </div>
 
 <script>
-let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
+let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
 
-function guardar() {
+function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
+function colorCategoria(cat) {
+  if (!cat) return "#00d1ff";
+  const c = cat.toLowerCase();
+  if (c.includes("gp")) return "#ff0055";
+  if (c.includes("gt")) return "#00ff99";
+  return "#00d1ff";
+}
+
 function render() {
-  guardar();
+  guardarDatos();
   const grid = document.getElementById("grid");
+  const gridPista = document.getElementById("gridPista");
   grid.innerHTML = "";
+  gridPista.innerHTML = "";
 
   competidores.forEach((p, i) => {
-    const div = document.createElement("div");
-    div.className = "card" + (p.enPista ? " en-pista" : "");
-    div.innerHTML = `
-      <b>${p.nombre}</b><br>
-      🏁 ${p.categoria || ""}<br>
-      ⭐ Puntos: ${totalPuntos(p)}<br><br>
-      <button onclick="abrirFicha(${i})">📄 Ficha</button>
+    const card = document.createElement("div");
+    card.className = "card" + (p.enPista ? " en-pista" : "");
+    card.innerHTML = `
+      <img src="${p.foto || ''}">
+      <div>${p.nombre}</div>
+      <div class="dorsal">${p.dorsal || ""}</div>
+      <div class="categoria" style="background:${colorCategoria(p.categoria)}">
+        ${p.categoria || ""}
+      </div>
     `;
-    grid.appendChild(div);
+    card.onclick = () => abrirFicha(i);
+
+    if (p.enPista) {
+      gridPista.appendChild(card.cloneNode(true));
+    }
+    grid.appendChild(card);
   });
 }
 
-function totalPuntos(p) {
-  return (p.resultados || []).reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
+function mostrarFormulario() {
+  document.getElementById("formulario").style.display = "block";
 }
 
-function nuevoCompetidor() {
-  const nombre = prompt("Nombre del competidor");
-  if (!nombre) return;
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
 
-  competidores.push({
-    nombre,
-    dorsal: "",
-    club: "",
-    categoria: "",
-    tipo: "",
-    embarcacion: "",
-    familiar: "",
-    foto: "",
+function guardarCompetidor() {
+  const reader = new FileReader();
+  const file = document.getElementById("n-foto").files[0];
+
+  const nuevo = {
+    nombre: document.getElementById("n-nombre").value,
+    dorsal: document.getElementById("n-dorsal").value,
+    categoria: document.getElementById("n-categoria").value,
+    tipo: document.getElementById("n-tipo").value,
+    club: document.getElementById("n-club").value,
+    embarcacion: document.getElementById("n-embarcacion").value,
+    familia: [],
+    resultados: [],
     enPista: false,
-    resultados: []
-  });
+    foto: ""
+  };
 
-  render();
+  reader.onload = e => {
+    nuevo.foto = e.target.result;
+    competidores.push(nuevo);
+    cerrarFormulario();
+    render();
+  };
+
+  if (file) reader.readAsDataURL(file);
+  else {
+    competidores.push(nuevo);
+    cerrarFormulario();
+    render();
+  }
 }
 
 function abrirFicha(i) {
   seleccionado = i;
   const p = competidores[i];
 
-  const win = window.open("", "ficha");
-  win.document.write(`
-    <html>
-    <body style="font-family:sans-serif;padding:20px">
-      <h2>${p.nombre}</h2>
-      <label>Dorsal</label>
-      <input id="dorsal" value="${p.dorsal}"><br>
-      <label>Club</label>
-      <input id="club" value="${p.club}"><br>
-      <label>Categoría</label>
-      <input id="cat" value="${p.categoria}"><br>
-      <label>Tipo</label>
-      <select id="tipo">
-        <option ${p.tipo=="Motos de agua"?"selected":""}>Motos de agua</option>
-        <option ${p.tipo=="Barcos"?"selected":""}>Barcos</option>
-      </select><br>
-      <label>Embarcación</label>
-      <input id="emb" value="${p.embarcacion}"><br>
-      <label>Lazo familiar</label>
-      <input id="fam" value="${p.familiar}"><br><br>
+  document.getElementById("f-nombre").innerText = p.nombre;
+  document.getElementById("f-dorsal").innerText = "Dorsal: " + p.dorsal;
+  document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
+  document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
+  document.getElementById("f-club").innerText = "Club: " + p.club;
+  document.getElementById("f-embarcacion").innerText = "Embarcación: " + p.embarcacion;
 
-      <button onclick="guardar()">💾 Guardar</button>
-      <button onclick="toggle()">🎮 En pista</button>
+  const res = document.getElementById("f-resultados");
+  res.innerHTML = "";
+  p.resultados.forEach(r => {
+    res.innerHTML += `
+      <div>
+        ${r.anio} | ${r.competicion} | Puesto ${r.puesto} | ⭐ ${r.puntos}
+      </div>
+    `;
+  });
 
-      <h3>Resultados</h3>
-      <div id="res"></div>
-      <button onclick="nuevoRes()">➕ Resultado</button>
-
-      <script>
-        const datos = opener.competidores[${i}];
-        function renderRes() {
-          const div = document.getElementById("res");
-          div.innerHTML = "";
-          datos.resultados.forEach(r => {
-            div.innerHTML += r.año + " - " + r.competicion + " | Puesto: " + r.puesto + " | Puntos: " + r.puntos + "<br>";
-          });
-        }
-        renderRes();
-
-        function nuevoRes() {
-          const año = prompt("Año");
-          const comp = prompt("Competición");
-          const puesto = prompt("Puesto");
-          const puntos = prompt("Puntos");
-
-          datos.resultados.push({año, competicion: comp, puesto, puntos});
-          renderRes();
-          opener.render();
-        }
-
-        function guardar() {
-          datos.dorsal = document.getElementById("dorsal").value;
-          datos.club = document.getElementById("club").value;
-          datos.categoria = document.getElementById("cat").value;
-          datos.tipo = document.getElementById("tipo").value;
-          datos.embarcacion = document.getElementById("emb").value;
-          datos.familiar = document.getElementById("fam").value;
-          opener.render();
-        }
-
-        function toggle() {
-          datos.enPista = !datos.enPista;
-          opener.render();
-        }
-      <\/script>
-    </body>
-    </html>
-  `);
+  document.getElementById("ficha").style.display = "block";
 }
 
-function pantallaPublico() {
-  const win = window.open("", "publico");
-  win.document.write(`
-    <html>
-    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
-      <h1>CLASIFICACIÓN EN VIVO</h1>
-      <div id="lista"></div>
-      <script>
-        function actualizar() {
-          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
-          let lista = [];
-          datos.forEach(p => {
-            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
-            lista.push({nombre:p.nombre, puntos:total});
-          });
-          lista.sort((a,b)=>b.puntos-a.puntos);
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
+}
 
-          const div = document.getElementById("lista");
-          div.innerHTML="";
-          lista.slice(0,10).forEach((p,i)=>{
-            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
-          });
-        }
-        setInterval(actualizar,2000);
-        actualizar();
-      <\/script>
-    </body>
-    </html>
-  `);
+function toggleEnPista() {
+  const p = competidores[seleccionado];
+  p.enPista = !p.enPista;
+  render();
+  abrirFicha(seleccionado);
+}
+
+function enlazarFamiliar() {
+  const nombre = prompt("Nombre del familiar:");
+  if (!nombre) return;
+  competidores[seleccionado].familia.push(nombre);
+  render();
+}
+
+function mostrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "block";
+}
+
+function cerrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "none";
+}
+
+function guardarResultado() {
+  const p = competidores[seleccionado];
+  p.resultados.push({
+    anio: document.getElementById("r-anio").value,
+    competicion: document.getElementById("r-competicion").value,
+    puesto: document.getElementById("r-puesto").value,
+    tiempo: document.getElementById("r-tiempo").value,
+    puntos: document.getElementById("r-puntos").value,
+    sanciones: document.getElementById("r-sanciones").value
+  });
+  cerrarResultadoForm();
+  render();
+}
+
+function mostrarRanking() {
+  const anio = prompt("Año (2005–2024)");
+  const categoria = prompt("Categoría");
+
+  let lista = [];
+
+  competidores.forEach(p => {
+    p.resultados.forEach(r => {
+      if (r.anio == anio && p.categoria.toLowerCase() == categoria.toLowerCase()) {
+        lista.push({ nombre: p.nombre, puntos: parseInt(r.puntos || 0) });
+      }
+    });
+  });
+
+  lista.sort((a, b) => b.puntos - a.puntos);
+
+  alert(
+    "RANKING " + categoria + " " + anio + "\n\n" +
+    lista.map((p, i) => `${i + 1}. ${p.nombre} — ${p.puntos} pts`).join("\n")
+  );
 }
 
 function exportarBackup() {
   const data = JSON.stringify(competidores, null, 2);
-  const blob = new Blob([data], {type:"application/json"});
+  const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
@@ -265,6 +405,7 @@ function importarBackup() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json";
+
   input.onchange = e => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -273,64 +414,8 @@ function importarBackup() {
     };
     reader.readAsText(e.target.files[0]);
   };
-  input.click();
-}
-
-async function importarPDF() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "application/pdf";
-
-  input.onchange = async e => {
-    const file = e.target.files[0];
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-
-    let texto = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      content.items.forEach(item => texto += item.str + "\n");
-    }
-
-    procesarRFEM(texto);
-  };
 
   input.click();
-}
-
-function procesarRFEM(texto) {
-  const lineas = texto.split("\n");
-  let competicion = "";
-  let año = new Date().getFullYear();
-
-  lineas.forEach(l => {
-    if (l === l.toUpperCase() && l.length > 10) {
-      competicion = l;
-    }
-
-    const match = l.match(/^(\d+)[ºª]\s+(.+)/);
-    if (match) {
-      const puesto = match[1];
-      const nombre = match[2].trim();
-
-      let piloto = competidores.find(p => p.nombre === nombre);
-      if (!piloto) {
-        piloto = {nombre, resultados: []};
-        competidores.push(piloto);
-      }
-
-      piloto.resultados.push({
-        año,
-        competicion,
-        puesto,
-        puntos: ""
-      });
-    }
-  });
-
-  render();
-  alert("PDF RFEM importado correctamente");
 }
 
 render();

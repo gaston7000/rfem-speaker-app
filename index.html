@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>RFEM Speaker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0b0f1a;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #11162a;
+      padding: 16px;
+      font-size: 24px;
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 16px;
+    }
+    .card {
+      background: #1a2040;
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .dorsal {
+      font-size: 36px;
+      font-weight: bold;
+    }
+    .categoria {
+      background: #00d1ff;
+      color: black;
+      padding: 4px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    #ficha {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #0b0f1a;
+      width: 100%;
+      height: 100%;
+      display: none;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #00d1ff;
+    }
+  </style>
+</head>
+<body>
+
+<header>RFEM Speaker</header>
+
+<div class="grid" id="grid"></div>
+
+<div id="ficha">
+  <button onclick="cerrarFicha()">⬅ Volver</button>
+  <h1 id="f-nombre"></h1>
+  <h2 id="f-dorsal"></h2>
+  <p id="f-categoria"></p>
+  <p id="f-tipo"></p>
+  <h3>🏁 Resultados</h3>
+  <div id="f-resultados"></div>
+</div>
+
+<script>
+let competidores = [
+  {
+    nombre: "Carlos López",
+    dorsal: "27",
+    categoria: "GP2",
+    tipo: "Motos de agua",
+    resultados: [
+      { año: 2024, puesto: 1, tiempo: "02:31", puntos: 25, sanciones: "-" }
+    ]
+  },
+  {
+    nombre: "María Pérez",
+    dorsal: "14",
+    categoria: "GT60",
+    tipo: "Barcos",
+    resultados: [
+      { año: 2024, puesto: 2, tiempo: "02:45", puntos: 20, sanciones: "Aviso" }
+    ]
+  }
+];
+
+function render() {
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  competidores.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <div>${p.nombre}</div>
+      <div class="dorsal">${p.dorsal}</div>
+      <div class="categoria">${p.categoria}</div>
+    `;
+    div.onclick = () => abrirFicha(i);
+    grid.appendChild(div);
+  });
+}
+
+function abrirFicha(i) {
+  const p = competidores[i];
+  document.getElementById("f-nombre").innerText = p.nombre;
+  document.getElementById("f-dorsal").innerText = "Dorsal " + p.dorsal;
+  document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
+  document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
+
+  const cont = document.getElementById("f-resultados");
+  cont.innerHTML = "";
+  p.resultados.forEach(r => {
+    cont.innerHTML += `
+      <p>${r.año} | Puesto ${r.puesto} | Tiempo ${r.tiempo} | Puntos ${r.puntos} | ${r.sanciones}</p>
+    `;
+  });
+
+  document.getElementById("ficha").style.display = "block";
+}
+
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
+}
+
+render();
+</script>
+
+</body>
+</html>

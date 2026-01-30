@@ -489,6 +489,75 @@ function importarPDF() {
 }
 
 function procesarTextoRFEM(texto) {
+  alert("📄 PDF cargado\n\nProcesando memoria RFEM...\nEsto puede tardar unos segundos.");
+
+  const lineas = texto.split("\n");
+  let creados = 0;
+
+  lineas.forEach(l => {
+    const linea = l.trim();
+
+    // Debe empezar por puesto (número)
+    if (!/^\d+/.test(linea)) return;
+
+    // Quitar dobles espacios
+    const limpia = linea.replace(/\s+/g, " ");
+
+    // Ejemplo esperado tras limpiar:
+    // "1 GARCIA, JUAN ESP 25"
+    const partes = limpia.split(" ");
+
+    if (partes.length < 3) return;
+
+    const puesto = partes[0];
+
+    // Último número = puntos
+    const puntos = partes[partes.length - 1];
+    if (isNaN(puntos)) return;
+
+    // Nombre = entre puesto y país/puntos
+    let nombrePartes = partes.slice(1, partes.length - 1);
+
+    // Quitar posibles códigos de país (ESP, FRA, ITA)
+    nombrePartes = nombrePartes.filter(p => p.length > 3);
+
+    const nombre = nombrePartes.join(" ").replace(",", "").trim();
+    if (!nombre) return;
+
+    let piloto = competidores.find(
+      p => p.nombre.toLowerCase() === nombre.toLowerCase()
+    );
+
+    if (!piloto) {
+      piloto = {
+        nombre: nombre,
+        dorsal: "",
+        categoria: "",
+        tipo: "",
+        club: "",
+        embarcacion: "",
+        familia: [],
+        resultados: [],
+        enPista: false,
+        foto: ""
+      };
+      competidores.push(piloto);
+      creados++;
+    }
+
+    piloto.resultados.push({
+      anio: new Date().getFullYear(),
+      competicion: "RFEM Importado",
+      puesto: puesto,
+      tiempo: "",
+      puntos: puntos,
+      sanciones: ""
+    });
+  });
+
+  render();
+  alert("✅ Importación completada\n\nPilotos creados: " + creados + "\n\nRevisa y completa los datos.");
+}
   alert("📄 PDF cargado\n\nAnalizando resultados RFEM...");
 
   const lineas = texto.split("\n");

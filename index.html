@@ -83,3 +83,161 @@
 </header>
 
 <div class="grid" id="grid"></div>
+
+<div id="ficha">
+  <button onclick="cerrarFicha()">⬅ Volver</button>
+  <h1 id="f-nombre"></h1>
+  <h2 id="f-dorsal"></h2>
+  <p id="f-categoria"></p>
+  <p id="f-tipo"></p>
+
+  <h3>🏁 Resultados</h3>
+  <div id="f-resultados"></div>
+
+  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado</button>
+</div>
+
+<!-- FORMULARIO NUEVO COMPETIDOR -->
+<div id="formulario" style="display:none; padding:20px;">
+  <h2>Nuevo Competidor</h2>
+  <input id="n-nombre" placeholder="Nombre"><br><br>
+  <input id="n-dorsal" placeholder="Dorsal"><br><br>
+  <input id="n-categoria" placeholder="Categoría"><br><br>
+  <select id="n-tipo">
+    <option>Motos de agua</option>
+    <option>Barcos</option>
+  </select><br><br>
+  <button onclick="guardarCompetidor()">Guardar</button>
+  <button onclick="cerrarFormulario()">Cancelar</button>
+</div>
+
+<!-- FORMULARIO RESULTADO -->
+<div id="resultadoForm" style="display:none; padding:20px;">
+  <h2>Nuevo Resultado</h2>
+  <input id="r-anio" placeholder="Año"><br><br>
+  <input id="r-puesto" placeholder="Puesto"><br><br>
+  <input id="r-tiempo" placeholder="Tiempo (02:31)"><br><br>
+  <input id="r-puntos" placeholder="Puntos"><br><br>
+  <input id="r-sanciones" placeholder="Sanciones"><br><br>
+  <button onclick="guardarResultado()">Guardar</button>
+  <button onclick="cerrarResultadoForm()">Cancelar</button>
+</div>
+
+<script>
+let competidores = JSON.parse(localStorage.getItem("rfemData")) || [
+  {
+    nombre: "Carlos López",
+    dorsal: "27",
+    categoria: "GP2",
+    tipo: "Motos de agua",
+    resultados: []
+  }
+];
+
+let seleccionado = null;
+
+function colorCategoria(cat) {
+  if (cat.toLowerCase().includes("gp")) return "#ff0055";
+  if (cat.toLowerCase().includes("gt")) return "#00ff99";
+  return "#00d1ff";
+}
+
+function render() {
+  const grid = document.getElementById("grid");
+  const filtro = document.getElementById("buscador").value.toLowerCase();
+  grid.innerHTML = "";
+
+  competidores
+    .filter(p =>
+      p.nombre.toLowerCase().includes(filtro) ||
+      p.dorsal.includes(filtro) ||
+      p.categoria.toLowerCase().includes(filtro)
+    )
+    .forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <div>${p.nombre}</div>
+        <div class="dorsal">${p.dorsal}</div>
+        <div class="categoria" style="background:${colorCategoria(p.categoria)}">
+          ${p.categoria}
+        </div>
+      `;
+      div.onclick = () => abrirFicha(i);
+      grid.appendChild(div);
+    });
+
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
+}
+
+function abrirFicha(i) {
+  seleccionado = i;
+  const p = competidores[i];
+  document.getElementById("f-nombre").innerText = p.nombre;
+  document.getElementById("f-dorsal").innerText = "Dorsal " + p.dorsal;
+  document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
+  document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
+
+  const cont = document.getElementById("f-resultados");
+  cont.innerHTML = "";
+  p.resultados.forEach(r => {
+    cont.innerHTML += `
+      <div class="resultado">
+        ${r.anio} | Puesto ${r.puesto} | ⏱ ${r.tiempo} | ⭐ ${r.puntos} | ${r.sanciones}
+      </div>
+    `;
+  });
+
+  document.getElementById("ficha").style.display = "block";
+}
+
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
+}
+
+function mostrarFormulario() {
+  document.getElementById("formulario").style.display = "block";
+}
+
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
+
+function guardarCompetidor() {
+  competidores.push({
+    nombre: document.getElementById("n-nombre").value,
+    dorsal: document.getElementById("n-dorsal").value,
+    categoria: document.getElementById("n-categoria").value,
+    tipo: document.getElementById("n-tipo").value,
+    resultados: []
+  });
+  cerrarFormulario();
+  render();
+}
+
+function mostrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "block";
+}
+
+function cerrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "none";
+}
+
+function guardarResultado() {
+  const p = competidores[seleccionado];
+  p.resultados.push({
+    anio: document.getElementById("r-anio").value,
+    puesto: document.getElementById("r-puesto").value,
+    tiempo: document.getElementById("r-tiempo").value,
+    puntos: document.getElementById("r-puntos").value,
+    sanciones: document.getElementById("r-sanciones").value
+  });
+  cerrarResultadoForm();
+  render();
+}
+
+render();
+</script>
+
+</body>
+</html>

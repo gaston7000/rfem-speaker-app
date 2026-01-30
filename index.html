@@ -1,90 +1,77 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>RFEM Speaker PRO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<title>RFEM Speaker App</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0b0f1a;
+  font-family: system-ui, sans-serif;
+  background: #0b1320;
   color: white;
+  margin: 0;
 }
+
 header {
-  background: #11162a;
+  background: #101c36;
   padding: 10px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-input, select, button {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-size: 16px;
-}
+
 button {
-  background: #00d1ff;
-  color: black;
+  background: #1e3a8a;
+  border: none;
+  padding: 10px 14px;
+  color: white;
+  border-radius: 10px;
   cursor: pointer;
 }
-.grid {
+
+button:hover {
+  background: #2563eb;
+}
+
+#grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  padding: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+  padding: 10px;
 }
+
 .card {
-  background: #1a2040;
-  border-radius: 16px;
-  padding: 8px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-.card:hover {
-  transform: scale(1.05);
-}
-.card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
+  background: #111827;
   border-radius: 12px;
+  padding: 10px;
 }
-.dorsal {
-  font-size: 28px;
-  font-weight: bold;
+
+.en-pista {
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00;
 }
-.categoria {
-  padding: 4px 8px;
-  border-radius: 8px;
-  display: inline-block;
-  font-size: 14px;
-}
-#ficha {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: #0b0f1a;
+
+input, select {
   width: 100%;
-  height: 100%;
-  display: none;
-  padding: 20px;
-  overflow-y: auto;
-}
-.resultado {
-  background: #11162a;
-  padding: 8px;
-  border-radius: 8px;
   margin-bottom: 6px;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
 }
-.tv-mode {
-  font-size: 32px;
-  background: black;
+
+#logos {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+  background: #020617;
 }
-.tv-mode header {
-  display: none;
+
+#logos img {
+  height: 60px;
+  opacity: 0.85;
 }
 </style>
 </head>
@@ -92,271 +79,258 @@ button {
 <body>
 
 <header>
-  <input id="buscador" placeholder="Buscar nombre, dorsal o categoría" oninput="render()">
-  <button onclick="mostrarFormulario()">➕ Competidor</button>
-  <button onclick="mostrarRanking()">📊 Ranking</button>
-  <button onclick="importarRFEM()">🌐 Importar RFEM</button>
-  <button onclick="modoTV()">🎥 Modo TV</button>
+  <button onclick="nuevoCompetidor()">➕ Competidor</button>
+  <button onclick="importarPDF()">🌐 Importar PDF RFEM</button>
+  <button onclick="pantallaPublico()">📺 Público</button>
+  <button onclick="exportarBackup()">☁️ Backup</button>
+  <button onclick="importarBackup()">☁️ Restaurar</button>
 </header>
 
-<div class="grid" id="grid"></div>
+<div id="grid"></div>
 
-<!-- FICHA -->
-<div id="ficha">
-  <button onclick="cerrarFicha()">⬅ Volver</button>
-  <button onclick="exportarPDF()">📄 Exportar PDF</button>
-
-  <h1 id="f-nombre"></h1>
-  <h2 id="f-dorsal"></h2>
-  <p id="f-categoria"></p>
-  <p id="f-tipo"></p>
-
-  <h3>👨‍👩‍👧‍👦 Familiares</h3>
-  <div id="f-familia"></div>
-  <button onclick="enlazarFamiliar()">➕ Enlazar Familiar</button>
-
-  <h3>🏁 Resultados</h3>
-  <div id="f-resultados"></div>
-  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado</button>
-</div>
-
-<!-- FORMULARIO NUEVO COMPETIDOR -->
-<div id="formulario" style="display:none; padding:20px;">
-  <h2>Nuevo Competidor</h2>
-  <input id="n-nombre" placeholder="Nombre"><br><br>
-  <input id="n-dorsal" placeholder="Dorsal"><br><br>
-  <input id="n-categoria" placeholder="Categoría (GP2, GT60, etc)"><br><br>
-  <select id="n-tipo">
-    <option>Motos de agua</option>
-    <option>Barcos</option>
-  </select><br><br>
-  <input type="file" id="n-foto" accept="image/*"><br><br>
-  <button onclick="guardarCompetidor()">Guardar</button>
-  <button onclick="cerrarFormulario()">Cancelar</button>
-</div>
-
-<!-- FORMULARIO RESULTADO -->
-<div id="resultadoForm" style="display:none; padding:20px;">
-  <h2>Nuevo Resultado</h2>
-  <input id="r-anio" placeholder="Año"><br><br>
-  <input id="r-puesto" placeholder="Puesto"><br><br>
-  <input id="r-tiempo" placeholder="Tiempo (02:31)"><br><br>
-  <input id="r-puntos" placeholder="Puntos"><br><br>
-  <input id="r-sanciones" placeholder="Sanciones"><br><br>
-  <button onclick="guardarResultado()">Guardar</button>
-  <button onclick="cerrarResultadoForm()">Cancelar</button>
+<div id="logos">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Real_Federacion_Espanola_de_Motonautica_logo.png">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Federacion_Andaluza_de_Motonautica_logo.png">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/UIM_logo.png">
+  <img src="https://gastoniglesias.com/logo.png">
 </div>
 
 <script>
-let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
+let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
 let seleccionado = null;
 
-function guardarDatos() {
+function guardar() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
-function colorCategoria(cat) {
-  if (!cat) return "#00d1ff";
-  const c = cat.toLowerCase();
-  if (c.includes("gp")) return "#ff0055";
-  if (c.includes("gt")) return "#00ff99";
-  return "#00d1ff";
-}
-
 function render() {
+  guardar();
   const grid = document.getElementById("grid");
-  const filtro = document.getElementById("buscador").value.toLowerCase();
   grid.innerHTML = "";
 
-  competidores
-    .filter(p =>
-      p.nombre.toLowerCase().includes(filtro) ||
-      p.dorsal.includes(filtro) ||
-      p.categoria.toLowerCase().includes(filtro)
-    )
-    .forEach((p, i) => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <img src="${p.foto || ''}">
-        <div>${p.nombre}</div>
-        <div class="dorsal">${p.dorsal}</div>
-        <div class="categoria" style="background:${colorCategoria(p.categoria)}">
-          ${p.categoria}
-        </div>
-      `;
-      div.onclick = () => abrirFicha(i);
-      grid.appendChild(div);
-    });
-
-  guardarDatos();
-}
-
-function abrirFicha(i) {
-  seleccionado = i;
-  const p = competidores[i];
-
-  document.getElementById("f-nombre").innerText = p.nombre;
-  document.getElementById("f-dorsal").innerText = "Dorsal " + p.dorsal;
-  document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
-  document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
-
-  const fam = document.getElementById("f-familia");
-  fam.innerHTML = p.familia.length
-    ? p.familia.map(f => "👤 " + f).join("<br>")
-    : "Sin familiares enlazados";
-
-  const cont = document.getElementById("f-resultados");
-  cont.innerHTML = "";
-  p.resultados.forEach(r => {
-    cont.innerHTML += `
-      <div class="resultado">
-        ${r.anio} | Puesto ${r.puesto} | ⏱ ${r.tiempo} | ⭐ ${r.puntos} | ${r.sanciones}
-      </div>
+  competidores.forEach((p, i) => {
+    const div = document.createElement("div");
+    div.className = "card" + (p.enPista ? " en-pista" : "");
+    div.innerHTML = `
+      <b>${p.nombre}</b><br>
+      🏁 ${p.categoria || ""}<br>
+      ⭐ Puntos: ${totalPuntos(p)}<br><br>
+      <button onclick="abrirFicha(${i})">📄 Ficha</button>
     `;
+    grid.appendChild(div);
   });
-
-  document.getElementById("ficha").style.display = "block";
 }
 
-function cerrarFicha() {
-  document.getElementById("ficha").style.display = "none";
+function totalPuntos(p) {
+  return (p.resultados || []).reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
 }
 
-function mostrarFormulario() {
-  document.getElementById("formulario").style.display = "block";
-}
-
-function cerrarFormulario() {
-  document.getElementById("formulario").style.display = "none";
-}
-
-function guardarCompetidor() {
-  const file = document.getElementById("n-foto").files[0];
-  const nombre = document.getElementById("n-nombre").value;
-
-  if (!nombre) {
-    alert("Introduce nombre del competidor");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    competidores.push({
-      nombre: nombre,
-      dorsal: document.getElementById("n-dorsal").value,
-      categoria: document.getElementById("n-categoria").value,
-      tipo: document.getElementById("n-tipo").value,
-      foto: e.target.result,
-      familia: [],
-      resultados: []
-    });
-    cerrarFormulario();
-    render();
-  };
-
-  if (file) reader.readAsDataURL(file);
-  else {
-    competidores.push({
-      nombre: nombre,
-      dorsal: document.getElementById("n-dorsal").value,
-      categoria: document.getElementById("n-categoria").value,
-      tipo: document.getElementById("n-tipo").value,
-      foto: "",
-      familia: [],
-      resultados: []
-    });
-    cerrarFormulario();
-    render();
-  }
-}
-
-function mostrarResultadoForm() {
-  document.getElementById("resultadoForm").style.display = "block";
-}
-
-function cerrarResultadoForm() {
-  document.getElementById("resultadoForm").style.display = "none";
-}
-
-function guardarResultado() {
-  const p = competidores[seleccionado];
-  p.resultados.push({
-    anio: document.getElementById("r-anio").value,
-    puesto: document.getElementById("r-puesto").value,
-    tiempo: document.getElementById("r-tiempo").value,
-    puntos: document.getElementById("r-puntos").value,
-    sanciones: document.getElementById("r-sanciones").value
-  });
-  cerrarResultadoForm();
-  render();
-}
-
-function enlazarFamiliar() {
-  const nombre = prompt("Nombre del familiar:");
+function nuevoCompetidor() {
+  const nombre = prompt("Nombre del competidor");
   if (!nombre) return;
-  competidores[seleccionado].familia.push(nombre);
-  render();
-  abrirFicha(seleccionado);
-}
-
-function mostrarRanking() {
-  const anio = prompt("Año:");
-  const categoria = prompt("Categoría:");
-
-  let lista = [];
-
-  competidores.forEach(p => {
-    p.resultados.forEach(r => {
-      if (
-        r.anio == anio &&
-        p.categoria.toLowerCase() == categoria.toLowerCase()
-      ) {
-        lista.push({
-          nombre: p.nombre,
-          puntos: parseInt(r.puntos || 0)
-        });
-      }
-    });
-  });
-
-  lista.sort((a, b) => b.puntos - a.puntos);
-
-  alert(
-    "RANKING " +
-      categoria +
-      " " +
-      anio +
-      "\n\n" +
-      lista.map((p, i) => `${i + 1}. ${p.nombre} - ${p.puntos} pts`).join("\n")
-  );
-}
-
-function exportarPDF() {
-  window.print();
-}
-
-function importarRFEM() {
-  const texto = prompt("Pega aquí datos copiados desde RFEM web o PDF:");
-  if (!texto) return;
-
-  const lineas = texto.split("\n");
 
   competidores.push({
-    nombre: lineas[0] || "Nuevo Piloto",
-    dorsal: lineas[1] || "",
-    categoria: lineas[2] || "",
-    tipo: "Motos de agua",
+    nombre,
+    dorsal: "",
+    club: "",
+    categoria: "",
+    tipo: "",
+    embarcacion: "",
+    familiar: "",
     foto: "",
-    familia: [],
+    enPista: false,
     resultados: []
   });
 
   render();
 }
 
-function modoTV() {
-  document.body.classList.toggle("tv-mode");
+function abrirFicha(i) {
+  seleccionado = i;
+  const p = competidores[i];
+
+  const win = window.open("", "ficha");
+  win.document.write(`
+    <html>
+    <body style="font-family:sans-serif;padding:20px">
+      <h2>${p.nombre}</h2>
+      <label>Dorsal</label>
+      <input id="dorsal" value="${p.dorsal}"><br>
+      <label>Club</label>
+      <input id="club" value="${p.club}"><br>
+      <label>Categoría</label>
+      <input id="cat" value="${p.categoria}"><br>
+      <label>Tipo</label>
+      <select id="tipo">
+        <option ${p.tipo=="Motos de agua"?"selected":""}>Motos de agua</option>
+        <option ${p.tipo=="Barcos"?"selected":""}>Barcos</option>
+      </select><br>
+      <label>Embarcación</label>
+      <input id="emb" value="${p.embarcacion}"><br>
+      <label>Lazo familiar</label>
+      <input id="fam" value="${p.familiar}"><br><br>
+
+      <button onclick="guardar()">💾 Guardar</button>
+      <button onclick="toggle()">🎮 En pista</button>
+
+      <h3>Resultados</h3>
+      <div id="res"></div>
+      <button onclick="nuevoRes()">➕ Resultado</button>
+
+      <script>
+        const datos = opener.competidores[${i}];
+        function renderRes() {
+          const div = document.getElementById("res");
+          div.innerHTML = "";
+          datos.resultados.forEach(r => {
+            div.innerHTML += r.año + " - " + r.competicion + " | Puesto: " + r.puesto + " | Puntos: " + r.puntos + "<br>";
+          });
+        }
+        renderRes();
+
+        function nuevoRes() {
+          const año = prompt("Año");
+          const comp = prompt("Competición");
+          const puesto = prompt("Puesto");
+          const puntos = prompt("Puntos");
+
+          datos.resultados.push({año, competicion: comp, puesto, puntos});
+          renderRes();
+          opener.render();
+        }
+
+        function guardar() {
+          datos.dorsal = document.getElementById("dorsal").value;
+          datos.club = document.getElementById("club").value;
+          datos.categoria = document.getElementById("cat").value;
+          datos.tipo = document.getElementById("tipo").value;
+          datos.embarcacion = document.getElementById("emb").value;
+          datos.familiar = document.getElementById("fam").value;
+          opener.render();
+        }
+
+        function toggle() {
+          datos.enPista = !datos.enPista;
+          opener.render();
+        }
+      <\/script>
+    </body>
+    </html>
+  `);
+}
+
+function pantallaPublico() {
+  const win = window.open("", "publico");
+  win.document.write(`
+    <html>
+    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
+      <h1>CLASIFICACIÓN EN VIVO</h1>
+      <div id="lista"></div>
+      <script>
+        function actualizar() {
+          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
+          let lista = [];
+          datos.forEach(p => {
+            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
+            lista.push({nombre:p.nombre, puntos:total});
+          });
+          lista.sort((a,b)=>b.puntos-a.puntos);
+
+          const div = document.getElementById("lista");
+          div.innerHTML="";
+          lista.slice(0,10).forEach((p,i)=>{
+            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
+          });
+        }
+        setInterval(actualizar,2000);
+        actualizar();
+      <\/script>
+    </body>
+    </html>
+  `);
+}
+
+function exportarBackup() {
+  const data = JSON.stringify(competidores, null, 2);
+  const blob = new Blob([data], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "rfem_backup.json";
+  a.click();
+}
+
+function importarBackup() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      competidores = JSON.parse(reader.result);
+      render();
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+async function importarPDF() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/pdf";
+
+  input.onchange = async e => {
+    const file = e.target.files[0];
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+
+    let texto = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      content.items.forEach(item => texto += item.str + "\n");
+    }
+
+    procesarRFEM(texto);
+  };
+
+  input.click();
+}
+
+function procesarRFEM(texto) {
+  const lineas = texto.split("\n");
+  let competicion = "";
+  let año = new Date().getFullYear();
+
+  lineas.forEach(l => {
+    if (l === l.toUpperCase() && l.length > 10) {
+      competicion = l;
+    }
+
+    const match = l.match(/^(\d+)[ºª]\s+(.+)/);
+    if (match) {
+      const puesto = match[1];
+      const nombre = match[2].trim();
+
+      let piloto = competidores.find(p => p.nombre === nombre);
+      if (!piloto) {
+        piloto = {nombre, resultados: []};
+        competidores.push(piloto);
+      }
+
+      piloto.resultados.push({
+        año,
+        competicion,
+        puesto,
+        puntos: ""
+      });
+    }
+  });
+
+  render();
+  alert("PDF RFEM importado correctamente");
 }
 
 render();

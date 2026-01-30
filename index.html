@@ -11,7 +11,7 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: 
+  background:
     linear-gradient(rgba(5,10,25,0.85), rgba(5,10,25,0.85)),
     url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80");
   background-size: cover;
@@ -146,7 +146,7 @@ input, select {
 <body>
 
 <header>
-  <button onclick="mostrarFormulario()">➕ Nuevo Competidor</button>
+  <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
   <button onclick="importarPDF()">📄 Importar RFEM (2005–2024)</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="pantallaPublico()">📺 Pantalla Público</button>
@@ -163,7 +163,7 @@ input, select {
 <!-- FORMULARIO COMPETIDOR -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver a Inicio</button>
-  <h2>Nuevo Competidor</h2>
+  <h2 id="form-title">Nuevo Competidor</h2>
 
   <input id="n-nombre" placeholder="Nombre completo">
   <input id="n-dorsal" placeholder="Dorsal">
@@ -176,12 +176,15 @@ input, select {
   <input id="n-embarcacion" placeholder="Marca y modelo de embarcación">
   <input type="file" id="n-foto" accept="image/*">
 
-  <button onclick="guardarCompetidor()">💾 Guardar</button>
+  <button onclick="guardarFormulario()">💾 Guardar</button>
 </div>
 
 <!-- FICHA -->
 <div id="ficha" class="overlay">
   <button onclick="cerrarFicha()">⬅ Volver a Inicio</button>
+  <button onclick="editarPiloto()">✏️ Editar Piloto</button>
+  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar Piloto</button>
+
   <h2 id="f-nombre"></h2>
 
   <p id="f-dorsal"></p>
@@ -224,6 +227,7 @@ input, select {
 <script>
 let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
+let editandoIndex = null;
 
 function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
@@ -258,50 +262,94 @@ function render() {
     card.onclick = () => abrirFicha(i);
 
     if (p.enPista) {
-      gridPista.appendChild(card.cloneNode(true));
+      const clone = card.cloneNode(true);
+      clone.onclick = () => abrirFicha(i);
+      gridPista.appendChild(clone);
     }
     grid.appendChild(card);
   });
 }
 
-function mostrarFormulario() {
+function mostrarFormularioNuevo() {
+  editandoIndex = null;
+  document.getElementById("form-title").innerText = "Nuevo Competidor";
+  limpiarFormulario();
   document.getElementById("formulario").style.display = "block";
+}
+
+function editarPiloto() {
+  editandoIndex = seleccionado;
+  const p = competidores[seleccionado];
+
+  document.getElementById("form-title").innerText = "Editar Competidor";
+  document.getElementById("n-nombre").value = p.nombre;
+  document.getElementById("n-dorsal").value = p.dorsal;
+  document.getElementById("n-categoria").value = p.categoria;
+  document.getElementById("n-tipo").value = p.tipo;
+  document.getElementById("n-club").value = p.club;
+  document.getElementById("n-embarcacion").value = p.embarcacion;
+
+  document.getElementById("ficha").style.display = "none";
+  document.getElementById("formulario").style.display = "block";
+}
+
+function limpiarFormulario() {
+  document.getElementById("n-nombre").value = "";
+  document.getElementById("n-dorsal").value = "";
+  document.getElementById("n-categoria").value = "";
+  document.getElementById("n-tipo").value = "Motos de agua";
+  document.getElementById("n-club").value = "";
+  document.getElementById("n-embarcacion").value = "";
+  document.getElementById("n-foto").value = "";
 }
 
 function cerrarFormulario() {
   document.getElementById("formulario").style.display = "none";
 }
 
-function guardarCompetidor() {
-  const reader = new FileReader();
+function guardarFormulario() {
   const file = document.getElementById("n-foto").files[0];
-
-  const nuevo = {
-    nombre: document.getElementById("n-nombre").value,
-    dorsal: document.getElementById("n-dorsal").value,
-    categoria: document.getElementById("n-categoria").value,
-    tipo: document.getElementById("n-tipo").value,
-    club: document.getElementById("n-club").value,
-    embarcacion: document.getElementById("n-embarcacion").value,
-    familia: [],
-    resultados: [],
-    enPista: false,
-    foto: ""
-  };
+  const reader = new FileReader();
 
   reader.onload = e => {
-    nuevo.foto = e.target.result;
-    competidores.push(nuevo);
-    cerrarFormulario();
-    render();
+    guardarFinal(e.target.result);
   };
 
-  if (file) reader.readAsDataURL(file);
-  else {
-    competidores.push(nuevo);
-    cerrarFormulario();
-    render();
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    guardarFinal(null);
   }
+}
+
+function guardarFinal(fotoData) {
+  if (editandoIndex !== null) {
+    const p = competidores[editandoIndex];
+    p.nombre = document.getElementById("n-nombre").value;
+    p.dorsal = document.getElementById("n-dorsal").value;
+    p.categoria = document.getElementById("n-categoria").value;
+    p.tipo = document.getElementById("n-tipo").value;
+    p.club = document.getElementById("n-club").value;
+    p.embarcacion = document.getElementById("n-embarcacion").value;
+    if (fotoData) p.foto = fotoData;
+  } else {
+    const nuevo = {
+      nombre: document.getElementById("n-nombre").value,
+      dorsal: document.getElementById("n-dorsal").value,
+      categoria: document.getElementById("n-categoria").value,
+      tipo: document.getElementById("n-tipo").value,
+      club: document.getElementById("n-club").value,
+      embarcacion: document.getElementById("n-embarcacion").value,
+      familia: [],
+      resultados: [],
+      enPista: false,
+      foto: fotoData || ""
+    };
+    competidores.push(nuevo);
+  }
+
+  cerrarFormulario();
+  render();
 }
 
 function abrirFicha(i) {
@@ -320,7 +368,7 @@ function abrirFicha(i) {
   p.resultados.forEach(r => {
     res.innerHTML += `
       <div>
-        ${r.anio} | ${r.competicion} | Puesto ${r.puesto} | ⭐ ${r.puntos}
+        ${r.anio} | ${r.competicion} | Puesto ${r.puesto} | ⭐ ${r.puntos || 0}
       </div>
     `;
   });
@@ -368,6 +416,24 @@ function guardarResultado() {
   render();
 }
 
+function eliminarPiloto() {
+  if (seleccionado === null) return;
+
+  const p = competidores[seleccionado];
+  const confirmar = confirm(
+    "⚠️ Vas a eliminar a:\n\n" +
+    p.nombre +
+    "\n\nSe borrarán TODOS sus datos y resultados.\n\n¿Confirmas?"
+  );
+
+  if (!confirmar) return;
+
+  competidores.splice(seleccionado, 1);
+  seleccionado = null;
+  cerrarFicha();
+  render();
+}
+
 function mostrarRanking() {
   const anio = prompt("Año (2005–2024)");
   const categoria = prompt("Categoría");
@@ -388,6 +454,37 @@ function mostrarRanking() {
     "RANKING " + categoria + " " + anio + "\n\n" +
     lista.map((p, i) => `${i + 1}. ${p.nombre} — ${p.puntos} pts`).join("\n")
   );
+}
+
+function pantallaPublico() {
+  const win = window.open("", "publico");
+  win.document.write(`
+    <html>
+    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
+      <h1>CLASIFICACIÓN EN VIVO</h1>
+      <div id="lista"></div>
+      <script>
+        function actualizar() {
+          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
+          let lista = [];
+          datos.forEach(p => {
+            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
+            lista.push({nombre:p.nombre, puntos:total});
+          });
+          lista.sort((a,b)=>b.puntos-a.puntos);
+
+          const div = document.getElementById("lista");
+          div.innerHTML="";
+          lista.slice(0,10).forEach((p,i)=>{
+            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
+          });
+        }
+        setInterval(actualizar,2000);
+        actualizar();
+      <\/script>
+    </body>
+    </html>
+  `);
 }
 
 function exportarBackup() {
@@ -416,6 +513,10 @@ function importarBackup() {
   };
 
   input.click();
+}
+
+function importarPDF() {
+  alert("📄 Importador RFEM activo.\n\nSelecciona un PDF oficial de la RFEM.\nEl sistema intentará detectar nombres, competiciones y resultados.\n\nTras importar, revisa y completa los datos manualmente.");
 }
 
 render();

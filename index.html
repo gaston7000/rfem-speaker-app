@@ -147,7 +147,7 @@ input, select {
 
 <header>
   <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
-  <button onclick="importarPDF()">📄 Importar RFEM (2005–2024)</button>
+  <button onclick="importarPDF()">📄 Importar RFEM (PDF)</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="pantallaPublico()">📺 Pantalla Público</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
@@ -215,6 +215,9 @@ input, select {
 
   <button onclick="guardarResultado()">💾 Guardar Resultado</button>
 </div>
+
+<!-- INPUT PDF OCULTO -->
+<input type="file" id="pdfInput" accept="application/pdf" style="display:none">
 
 <!-- FOOTER LOGOS -->
 <div class="footer">
@@ -456,35 +459,79 @@ function mostrarRanking() {
   );
 }
 
-function pantallaPublico() {
-  const win = window.open("", "publico");
-  win.document.write(`
-    <html>
-    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
-      <h1>CLASIFICACIÓN EN VIVO</h1>
-      <div id="lista"></div>
-      <script>
-        function actualizar() {
-          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
-          let lista = [];
-          datos.forEach(p => {
-            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
-            lista.push({nombre:p.nombre, puntos:total});
-          });
-          lista.sort((a,b)=>b.puntos-a.puntos);
+/* ====== PDF IMPORTADOR REAL ====== */
+document.getElementById("pdfInput").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-          const div = document.getElementById("lista");
-          div.innerHTML="";
-          lista.slice(0,10).forEach((p,i)=>{
-            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
-          });
-        }
-        setInterval(actualizar,2000);
-        actualizar();
-      <\/script>
-    </body>
-    </html>
-  `);
+  const reader = new FileReader();
+  reader.onload = function() {
+    const typedarray = new Uint8Array(this.result);
+
+    pdfjsLib.getDocument(typedarray).promise.then(async pdf => {
+      let textoCompleto = "";
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const strings = content.items.map(item => item.str);
+        textoCompleto += strings.join(" ") + "\n";
+      }
+
+      procesarTextoRFEM(textoCompleto);
+    });
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+function importarPDF() {
+  document.getElementById("pdfInput").click();
+}
+
+function procesarTextoRFEM(texto) {
+  alert("📄 PDF cargado\n\nAnalizando resultados RFEM...");
+
+  const lineas = texto.split("\n");
+
+  lineas.forEach(l => {
+    // Ejemplo detectado: "1 GARCIA JUAN 25 pts"
+    const match = l.match(/^(\d+)\s+([A-ZÁÉÍÓÚÑ\s]+)\s+(\d+)\s*pts/i);
+    if (!match) return;
+
+    const puesto = match[1];
+    const nombre = match[2].trim();
+    const puntos = match[3];
+
+    let piloto = competidores.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+
+    if (!piloto) {
+      piloto = {
+        nombre: nombre,
+        dorsal: "",
+        categoria: "",
+        tipo: "",
+        club: "",
+        embarcacion: "",
+        familia: [],
+        resultados: [],
+        enPista: false,
+        foto: ""
+      };
+      competidores.push(piloto);
+    }
+
+    piloto.resultados.push({
+      anio: new Date().getFullYear(),
+      competicion: "RFEM Importado",
+      puesto: puesto,
+      tiempo: "",
+      puntos: puntos,
+      sanciones: ""
+    });
+  });
+
+  render();
+  alert("✅ Importación RFEM completada.\n\nRevisa y completa los datos.");
 }
 
 function exportarBackup() {
@@ -513,10 +560,6 @@ function importarBackup() {
   };
 
   input.click();
-}
-
-function importarPDF() {
-  alert("📄 Importador RFEM activo.\n\nSelecciona un PDF oficial de la RFEM.\nEl sistema intentará detectar nombres, competiciones y resultados.\n\nTras importar, revisa y completa los datos manualmente.");
 }
 
 render();

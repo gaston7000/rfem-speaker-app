@@ -1,99 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>RFEM Speaker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #0b0f1a;
-      color: white;
-      margin: 0;
-    }
-    header {
-      background: #11162a;
-      padding: 12px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    input, select, button {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      background: #00d1ff;
-      color: black;
-      cursor: pointer;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 12px;
-      padding: 12px;
-    }
-    .card {
-      background: #1a2040;
-      border-radius: 16px;
-      padding: 12px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .card:hover {
-      transform: scale(1.05);
-    }
-    .dorsal {
-      font-size: 32px;
-      font-weight: bold;
-    }
-    .categoria {
-      padding: 4px 8px;
-      border-radius: 8px;
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 14px;
-    }
-    #ficha {
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #0b0f1a;
-      width: 100%;
-      height: 100%;
-      display: none;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    .resultado {
-      background: #11162a;
-      padding: 8px;
-      border-radius: 8px;
-      margin-bottom: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>RFEM Speaker PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0b0f1a;
+  color: white;
+}
+header {
+  background: #11162a;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+input, select, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+}
+button {
+  background: #00d1ff;
+  color: black;
+  cursor: pointer;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 12px;
+}
+.card {
+  background: #1a2040;
+  border-radius: 16px;
+  padding: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: scale(1.05);
+}
+.card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.dorsal {
+  font-size: 28px;
+  font-weight: bold;
+}
+.categoria {
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  font-size: 14px;
+}
+#ficha {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #0b0f1a;
+  width: 100%;
+  height: 100%;
+  display: none;
+  padding: 20px;
+  overflow-y: auto;
+}
+.resultado {
+  background: #11162a;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.tv-mode {
+  font-size: 32px;
+  background: black;
+}
+.tv-mode header {
+  display: none;
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <input id="buscador" placeholder="Buscar nombre, dorsal o categoría" oninput="render()">
   <button onclick="mostrarFormulario()">➕ Competidor</button>
+  <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="importarRFEM()">🌐 Importar RFEM</button>
+  <button onclick="modoTV()">🎥 Modo TV</button>
 </header>
 
 <div class="grid" id="grid"></div>
 
+<!-- FICHA -->
 <div id="ficha">
   <button onclick="cerrarFicha()">⬅ Volver</button>
+  <button onclick="exportarPDF()">📄 Exportar PDF</button>
+
   <h1 id="f-nombre"></h1>
   <h2 id="f-dorsal"></h2>
   <p id="f-categoria"></p>
   <p id="f-tipo"></p>
 
+  <h3>👨‍👩‍👧‍👦 Familiares</h3>
+  <div id="f-familia"></div>
+  <button onclick="enlazarFamiliar()">➕ Enlazar Familiar</button>
+
   <h3>🏁 Resultados</h3>
   <div id="f-resultados"></div>
-
   <button onclick="mostrarResultadoForm()">➕ Añadir Resultado</button>
 </div>
 
@@ -102,11 +125,12 @@
   <h2>Nuevo Competidor</h2>
   <input id="n-nombre" placeholder="Nombre"><br><br>
   <input id="n-dorsal" placeholder="Dorsal"><br><br>
-  <input id="n-categoria" placeholder="Categoría"><br><br>
+  <input id="n-categoria" placeholder="Categoría (GP2, GT60, etc)"><br><br>
   <select id="n-tipo">
     <option>Motos de agua</option>
     <option>Barcos</option>
   </select><br><br>
+  <input type="file" id="n-foto" accept="image/*"><br><br>
   <button onclick="guardarCompetidor()">Guardar</button>
   <button onclick="cerrarFormulario()">Cancelar</button>
 </div>
@@ -124,21 +148,18 @@
 </div>
 
 <script>
-let competidores = JSON.parse(localStorage.getItem("rfemData")) || [
-  {
-    nombre: "Carlos López",
-    dorsal: "27",
-    categoria: "GP2",
-    tipo: "Motos de agua",
-    resultados: []
-  }
-];
-
+let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
 
+function guardarDatos() {
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
+}
+
 function colorCategoria(cat) {
-  if (cat.toLowerCase().includes("gp")) return "#ff0055";
-  if (cat.toLowerCase().includes("gt")) return "#00ff99";
+  if (!cat) return "#00d1ff";
+  const c = cat.toLowerCase();
+  if (c.includes("gp")) return "#ff0055";
+  if (c.includes("gt")) return "#00ff99";
   return "#00d1ff";
 }
 
@@ -157,6 +178,7 @@ function render() {
       const div = document.createElement("div");
       div.className = "card";
       div.innerHTML = `
+        <img src="${p.foto || ''}">
         <div>${p.nombre}</div>
         <div class="dorsal">${p.dorsal}</div>
         <div class="categoria" style="background:${colorCategoria(p.categoria)}">
@@ -167,16 +189,22 @@ function render() {
       grid.appendChild(div);
     });
 
-  localStorage.setItem("rfemData", JSON.stringify(competidores));
+  guardarDatos();
 }
 
 function abrirFicha(i) {
   seleccionado = i;
   const p = competidores[i];
+
   document.getElementById("f-nombre").innerText = p.nombre;
   document.getElementById("f-dorsal").innerText = "Dorsal " + p.dorsal;
   document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
   document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
+
+  const fam = document.getElementById("f-familia");
+  fam.innerHTML = p.familia.length
+    ? p.familia.map(f => "👤 " + f).join("<br>")
+    : "Sin familiares enlazados";
 
   const cont = document.getElementById("f-resultados");
   cont.innerHTML = "";
@@ -204,15 +232,43 @@ function cerrarFormulario() {
 }
 
 function guardarCompetidor() {
-  competidores.push({
-    nombre: document.getElementById("n-nombre").value,
-    dorsal: document.getElementById("n-dorsal").value,
-    categoria: document.getElementById("n-categoria").value,
-    tipo: document.getElementById("n-tipo").value,
-    resultados: []
-  });
-  cerrarFormulario();
-  render();
+  const file = document.getElementById("n-foto").files[0];
+  const nombre = document.getElementById("n-nombre").value;
+
+  if (!nombre) {
+    alert("Introduce nombre del competidor");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    competidores.push({
+      nombre: nombre,
+      dorsal: document.getElementById("n-dorsal").value,
+      categoria: document.getElementById("n-categoria").value,
+      tipo: document.getElementById("n-tipo").value,
+      foto: e.target.result,
+      familia: [],
+      resultados: []
+    });
+    cerrarFormulario();
+    render();
+  };
+
+  if (file) reader.readAsDataURL(file);
+  else {
+    competidores.push({
+      nombre: nombre,
+      dorsal: document.getElementById("n-dorsal").value,
+      categoria: document.getElementById("n-categoria").value,
+      tipo: document.getElementById("n-tipo").value,
+      foto: "",
+      familia: [],
+      resultados: []
+    });
+    cerrarFormulario();
+    render();
+  }
 }
 
 function mostrarResultadoForm() {
@@ -234,6 +290,73 @@ function guardarResultado() {
   });
   cerrarResultadoForm();
   render();
+}
+
+function enlazarFamiliar() {
+  const nombre = prompt("Nombre del familiar:");
+  if (!nombre) return;
+  competidores[seleccionado].familia.push(nombre);
+  render();
+  abrirFicha(seleccionado);
+}
+
+function mostrarRanking() {
+  const anio = prompt("Año:");
+  const categoria = prompt("Categoría:");
+
+  let lista = [];
+
+  competidores.forEach(p => {
+    p.resultados.forEach(r => {
+      if (
+        r.anio == anio &&
+        p.categoria.toLowerCase() == categoria.toLowerCase()
+      ) {
+        lista.push({
+          nombre: p.nombre,
+          puntos: parseInt(r.puntos || 0)
+        });
+      }
+    });
+  });
+
+  lista.sort((a, b) => b.puntos - a.puntos);
+
+  alert(
+    "RANKING " +
+      categoria +
+      " " +
+      anio +
+      "\n\n" +
+      lista.map((p, i) => `${i + 1}. ${p.nombre} - ${p.puntos} pts`).join("\n")
+  );
+}
+
+function exportarPDF() {
+  window.print();
+}
+
+function importarRFEM() {
+  const texto = prompt("Pega aquí datos copiados desde RFEM web o PDF:");
+  if (!texto) return;
+
+  const lineas = texto.split("\n");
+
+  competidores.push({
+    nombre: lineas[0] || "Nuevo Piloto",
+    dorsal: lineas[1] || "",
+    categoria: lineas[2] || "",
+    tipo: "Motos de agua",
+    foto: "",
+    familia: [],
+    resultados: []
+  });
+
+  render();
+}
+
+function modoTV() {
+  document.body.classList.toggle("tv-mode");
 }
 
 render();

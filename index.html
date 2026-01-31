@@ -459,7 +459,38 @@ function mostrarRanking() {
   );
 }
 
-/* ====== PDF IMPORTADOR REAL ====== */
+function pantallaPublico() {
+  const win = window.open("", "publico");
+  win.document.write(`
+    <html>
+    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
+      <h1>CLASIFICACIÓN EN VIVO</h1>
+      <div id="lista"></div>
+      <script>
+        function actualizar() {
+          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
+          let lista = [];
+          datos.forEach(p => {
+            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
+            lista.push({nombre:p.nombre, puntos:total});
+          });
+          lista.sort((a,b)=>b.puntos-a.puntos);
+
+          const div = document.getElementById("lista");
+          div.innerHTML="";
+          lista.slice(0,10).forEach((p,i)=>{
+            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
+          });
+        }
+        setInterval(actualizar,2000);
+        actualizar();
+      <\/script>
+    </body>
+    </html>
+  `);
+}
+
+/* ===== PDF IMPORTADOR ROBUSTO ===== */
 document.getElementById("pdfInput").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -496,29 +527,17 @@ function procesarTextoRFEM(texto) {
 
   lineas.forEach(l => {
     const linea = l.trim();
-
-    // Debe empezar por puesto (número)
     if (!/^\d+/.test(linea)) return;
 
-    // Quitar dobles espacios
     const limpia = linea.replace(/\s+/g, " ");
-
-    // Ejemplo esperado tras limpiar:
-    // "1 GARCIA, JUAN ESP 25"
     const partes = limpia.split(" ");
-
     if (partes.length < 3) return;
 
     const puesto = partes[0];
-
-    // Último número = puntos
     const puntos = partes[partes.length - 1];
     if (isNaN(puntos)) return;
 
-    // Nombre = entre puesto y país/puntos
     let nombrePartes = partes.slice(1, partes.length - 1);
-
-    // Quitar posibles códigos de país (ESP, FRA, ITA)
     nombrePartes = nombrePartes.filter(p => p.length > 3);
 
     const nombre = nombrePartes.join(" ").replace(",", "").trim();
@@ -557,50 +576,6 @@ function procesarTextoRFEM(texto) {
 
   render();
   alert("✅ Importación completada\n\nPilotos creados: " + creados + "\n\nRevisa y completa los datos.");
-}
-  alert("📄 PDF cargado\n\nAnalizando resultados RFEM...");
-
-  const lineas = texto.split("\n");
-
-  lineas.forEach(l => {
-    // Ejemplo detectado: "1 GARCIA JUAN 25 pts"
-    const match = l.match(/^(\d+)\s+([A-ZÁÉÍÓÚÑ\s]+)\s+(\d+)\s*pts/i);
-    if (!match) return;
-
-    const puesto = match[1];
-    const nombre = match[2].trim();
-    const puntos = match[3];
-
-    let piloto = competidores.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-
-    if (!piloto) {
-      piloto = {
-        nombre: nombre,
-        dorsal: "",
-        categoria: "",
-        tipo: "",
-        club: "",
-        embarcacion: "",
-        familia: [],
-        resultados: [],
-        enPista: false,
-        foto: ""
-      };
-      competidores.push(piloto);
-    }
-
-    piloto.resultados.push({
-      anio: new Date().getFullYear(),
-      competicion: "RFEM Importado",
-      puesto: puesto,
-      tiempo: "",
-      puntos: puntos,
-      sanciones: ""
-    });
-  });
-
-  render();
-  alert("✅ Importación RFEM completada.\n\nRevisa y completa los datos.");
 }
 
 function exportarBackup() {

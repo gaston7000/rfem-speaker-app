@@ -147,7 +147,8 @@ input, select {
 
 <header>
   <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
-  <button onclick="importarPDF()">📄 Importar RFEM (PDF)</button>
+  <button onclick="importarPDF()">📄 Importar RFEM (Resultados)</button>
+  <button onclick="importarMemoria()">🏆 Importar Memoria RFEM (Palmarés)</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="pantallaPublico()">📺 Pantalla Público</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
@@ -196,9 +197,9 @@ input, select {
   <button onclick="toggleEnPista()">🎮 En Pista</button>
   <button onclick="enlazarFamiliar()">👨‍👩‍👧‍👦 Enlazar Familiar</button>
 
-  <h3>🏁 Resultados</h3>
+  <h3>🏁 Resultados / Palmarés</h3>
   <div id="f-resultados"></div>
-  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado</button>
+  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado Manual</button>
 </div>
 
 <!-- RESULTADO -->
@@ -371,7 +372,7 @@ function abrirFicha(i) {
   p.resultados.forEach(r => {
     res.innerHTML += `
       <div>
-        ${r.anio} | ${r.competicion} | Puesto ${r.puesto} | ⭐ ${r.puntos || 0}
+        ${r.anio} | ${r.competicion || ""} | ${r.categoria || ""} | Puesto ${r.puesto}
       </div>
     `;
   });
@@ -413,7 +414,8 @@ function guardarResultado() {
     puesto: document.getElementById("r-puesto").value,
     tiempo: document.getElementById("r-tiempo").value,
     puntos: document.getElementById("r-puntos").value,
-    sanciones: document.getElementById("r-sanciones").value
+    sanciones: document.getElementById("r-sanciones").value,
+    categoria: p.categoria
   });
   cerrarResultadoForm();
   render();
@@ -438,15 +440,21 @@ function eliminarPiloto() {
 }
 
 function mostrarRanking() {
-  const anio = prompt("Año (2005–2024)");
-  const categoria = prompt("Categoría");
+  const categoria = prompt("Categoría (ej: GP2, GT60, SKI DIVISION)");
+  if (!categoria) return;
 
   let lista = [];
 
   competidores.forEach(p => {
     p.resultados.forEach(r => {
-      if (r.anio == anio && p.categoria.toLowerCase() == categoria.toLowerCase()) {
-        lista.push({ nombre: p.nombre, puntos: parseInt(r.puntos || 0) });
+      if (
+        r.categoria &&
+        r.categoria.toLowerCase().includes(categoria.toLowerCase())
+      ) {
+        lista.push({
+          nombre: p.nombre,
+          puntos: r.puesto == 1 ? 100 : r.puesto == 2 ? 70 : r.puesto == 3 ? 50 : 20
+        });
       }
     });
   });
@@ -454,7 +462,7 @@ function mostrarRanking() {
   lista.sort((a, b) => b.puntos - a.puntos);
 
   alert(
-    "RANKING " + categoria + " " + anio + "\n\n" +
+    "🏆 PALMARÉS HISTÓRICO — " + categoria + "\n\n" +
     lista.map((p, i) => `${i + 1}. ${p.nombre} — ${p.puntos} pts`).join("\n")
   );
 }
@@ -464,14 +472,19 @@ function pantallaPublico() {
   win.document.write(`
     <html>
     <body style="background:black;color:white;font-family:sans-serif;padding:20px">
-      <h1>CLASIFICACIÓN EN VIVO</h1>
+      <h1>PALMARÉS HISTÓRICO</h1>
       <div id="lista"></div>
       <script>
         function actualizar() {
           const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
           let lista = [];
           datos.forEach(p => {
-            const total = p.resultados.reduce((s, r) => s + (parseInt(r.puntos)||0), 0);
+            const total = p.resultados.reduce((s, r) => {
+              if (r.puesto == 1) return s + 100;
+              if (r.puesto == 2) return s + 70;
+              if (r.puesto == 3) return s + 50;
+              return s + 20;
+            }, 0);
             lista.push({nombre:p.nombre, puntos:total});
           });
           lista.sort((a,b)=>b.puntos-a.puntos);
@@ -479,7 +492,7 @@ function pantallaPublico() {
           const div = document.getElementById("lista");
           div.innerHTML="";
           lista.slice(0,10).forEach((p,i)=>{
-            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — ⭐ \${p.puntos}</div>\`;
+            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — 🏆 \${p.puntos}</div>\`;
           });
         }
         setInterval(actualizar,2000);
@@ -490,7 +503,7 @@ function pantallaPublico() {
   `);
 }
 
-/* ===== PDF IMPORTADOR ROBUSTO ===== */
+/* ===== IMPORTADOR PDF RESULTADOS BÁSICOS ===== */
 document.getElementById("pdfInput").addEventListener("change", function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -520,10 +533,9 @@ function importarPDF() {
 }
 
 function procesarTextoRFEM(texto) {
-  alert("📄 PDF cargado\n\nProcesando memoria RFEM...\nEsto puede tardar unos segundos.");
+  alert("📄 Resultados cargados\n\nProcesando...");
 
   const lineas = texto.split("\n");
-  let creados = 0;
 
   lineas.forEach(l => {
     const linea = l.trim();
@@ -539,7 +551,6 @@ function procesarTextoRFEM(texto) {
 
     let nombrePartes = partes.slice(1, partes.length - 1);
     nombrePartes = nombrePartes.filter(p => p.length > 3);
-
     const nombre = nombrePartes.join(" ").replace(",", "").trim();
     if (!nombre) return;
 
@@ -561,21 +572,155 @@ function procesarTextoRFEM(texto) {
         foto: ""
       };
       competidores.push(piloto);
-      creados++;
     }
 
     piloto.resultados.push({
       anio: new Date().getFullYear(),
-      competicion: "RFEM Importado",
+      competicion: "RFEM Resultados",
       puesto: puesto,
       tiempo: "",
       puntos: puntos,
-      sanciones: ""
+      sanciones: "",
+      categoria: piloto.categoria
     });
   });
 
   render();
-  alert("✅ Importación completada\n\nPilotos creados: " + creados + "\n\nRevisa y completa los datos.");
+  alert("✅ Resultados importados. Revisa los pilotos.");
+}
+
+/* ===== IMPORTADOR MEMORIA RFEM PALMARÉS ===== */
+function importarMemoria() {
+  document.getElementById("pdfInput").onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function() {
+      const typedarray = new Uint8Array(this.result);
+
+      pdfjsLib.getDocument(typedarray).promise.then(async pdf => {
+        let textoCompleto = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const strings = content.items.map(item => item.str);
+          textoCompleto += strings.join(" ") + "\n";
+        }
+
+        procesarMemoriaRFEM(textoCompleto);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
+  document.getElementById("pdfInput").click();
+}
+
+function procesarMemoriaRFEM(texto) {
+  alert("🏆 Memoria RFEM cargada\n\nAnalizando palmarés histórico...");
+
+  let anio = "????";
+  const matchAnio = texto.match(/20\d{2}|19\d{2}/);
+  if (matchAnio) anio = matchAnio[0];
+
+  const lineas = texto.split("\n");
+  let competicionActual = "";
+  let categoriaActual = "";
+  let creados = 0;
+
+  lineas.forEach(l => {
+    const linea = l.trim();
+    if (!linea) return;
+
+    const upper = linea.toUpperCase();
+
+    if (
+      upper.includes("CAMPEONATO") ||
+      upper.includes("COPA") ||
+      upper.includes("TROFEO")
+    ) {
+      competicionActual = linea;
+      return;
+    }
+
+    if (
+      upper.includes("SKI") ||
+      upper.includes("DIVISION") ||
+      upper.includes("GP") ||
+      upper.includes("GT") ||
+      upper.includes("FORMULA")
+    ) {
+      categoriaActual = linea;
+      return;
+    }
+
+    let puesto = null;
+    let nombre = null;
+
+    let m = linea.match(/^(\d+)[º°]\s+(.+)/);
+    if (m) {
+      puesto = m[1];
+      nombre = m[2];
+    }
+
+    if (upper.startsWith("CAMPEÓN")) {
+      puesto = "1";
+      nombre = linea.split(":")[1];
+    }
+    if (upper.startsWith("SUBCAMPEÓN")) {
+      puesto = "2";
+      nombre = linea.split(":")[1];
+    }
+    if (upper.startsWith("TERCERO")) {
+      puesto = "3";
+      nombre = linea.split(":")[1];
+    }
+
+    if (!puesto || !nombre) return;
+
+    nombre = nombre.trim();
+    if (!nombre) return;
+
+    let piloto = competidores.find(
+      p => p.nombre.toLowerCase() === nombre.toLowerCase()
+    );
+
+    if (!piloto) {
+      piloto = {
+        nombre: nombre,
+        dorsal: "",
+        categoria: categoriaActual,
+        tipo: "",
+        club: "",
+        embarcacion: "",
+        familia: [],
+        resultados: [],
+        enPista: false,
+        foto: ""
+      };
+      competidores.push(piloto);
+      creados++;
+    }
+
+    piloto.resultados.push({
+      anio: anio,
+      competicion: competicionActual,
+      puesto: puesto,
+      tiempo: "",
+      puntos: "",
+      sanciones: "",
+      categoria: categoriaActual
+    });
+  });
+
+  render();
+  alert(
+    "✅ Palmarés importado\n\nAño: " + anio +
+    "\nPilotos creados: " + creados +
+    "\n\nYa puedes consultar rankings históricos por categoría."
+  );
 }
 
 function exportarBackup() {

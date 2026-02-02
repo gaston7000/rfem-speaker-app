@@ -1,154 +1,140 @@
-# RFEM Speaker Pro — index.html (iPad + Windows blindado)
-
-Copia TODO este archivo y pégalo en tu `index.html`.
-Funciona offline, táctil, sin servidor y sin dependencias externas.
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>RFEM Speaker Pro</title>
+<title>RFEM Speaker PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ===== RESET ===== */
-*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu}
-html,body{margin:0;padding:0;height:100%}
-
-/* ===== FONDO BLINDADO ===== */
-body{
-  min-height:100vh;
-  background:url("https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
-  overflow-x:hidden;
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:
+    linear-gradient(rgba(5,10,25,0.85), rgba(5,10,25,0.85)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80");
+  background-size: cover;
+  background-attachment: fixed;
+  color: white;
 }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  z-index:-1;
+header {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  background: rgba(5,10,25,0.7);
+  backdrop-filter: blur(8px);
 }
 
-#app{
-  position:relative;
-  z-index:1;
-  color:#fff;
-  padding:20px;
+button {
+  background: #00d1ff;
+  border: none;
+  padding: 14px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+button:hover {
+  background: #00b4dd;
+  transform: scale(1.05);
 }
 
-h1{
-  text-align:center;
-  margin:10px 0 20px;
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  margin: 20px;
 }
 
-.section-title{
-  margin:30px 0 10px;
-  font-size:1.5rem;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  gap: 16px;
+  padding: 20px;
 }
 
-/* ===== BOTONES ===== */
-button{
-  background:#00d1ff;
-  border:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-weight:700;
-  cursor:pointer;
+.card {
+  background: rgba(20,30,60,0.9);
+  border-radius: 20px;
+  padding: 14px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.card:hover { transform: scale(1.05); }
+
+.en-pista {
+  border: 4px solid #00ff00;
+  box-shadow: 0 0 25px #00ff00;
 }
 
-button:hover{opacity:.85}
-
-.danger{background:#ff4d4d;color:#fff}
-
-/* ===== GRID ===== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:15px;
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
 }
 
-.card{
-  background:rgba(0,0,0,0.6);
-  border-radius:15px;
-  padding:10px;
-  text-align:center;
-  cursor:pointer;
+.dorsal { font-size: 32px; font-weight: bold; }
+
+.overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(5,10,25,0.95);
+  display: none;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.card img{
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  border-radius:10px;
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
 }
 
-.en-pista{outline:3px solid #00ff66}
-
-/* ===== MODAL ===== */
-#modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.8);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+.timeline {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
-.modal-content{
-  background:#111;
-  padding:20px;
-  border-radius:20px;
-  width:90%;
-  max-width:600px;
-  max-height:90vh;
-  overflow:auto;
+.timeline-item {
+  min-width: 240px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px #00d1ff;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:8px;
-  margin:6px 0 12px;
-  border-radius:8px;
-  border:none;
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 20px;
+  background: rgba(0,0,0,0.6);
 }
-
-.badge{
-  display:inline-block;
-  padding:6px 12px;
-  margin:4px;
-  background:#00d1ff;
-  border-radius:12px;
-  font-weight:700;
-  color:#000;
-}
-
-footer{
-  margin-top:40px;
-  text-align:center;
-}
-
-footer img{
-  height:50px;
-  margin:0 15px;
-}
-
+.footer img { height: 60px; opacity: 0.85; }
 </style>
 </head>
+
 <body>
 
-<div id="app">
-
-<h1>🎙️ RFEM SPEAKER PRO</h1>
-
-<div style="text-align:center;margin-bottom:20px">
-  <button onclick="abrirNuevo()">➕ Nuevo Piloto</button>
-  <button onclick="backup()">☁️ Backup</button>
-  <button onclick="restore()">♻️ Restaurar</button>
-  <button onclick="importarDatosHistoricos()">🏆 Cargar Historial RFEM</button>
-</div>
+<header>
+  <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
+  <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="cargarDemo()">🏆 Cargar Palmarés Histórico</button>
+  <button onclick="exportarBackup()">☁️ Backup</button>
+  <button onclick="importarBackup()">☁️ Restaurar</button>
+</header>
 
 <h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
 <div class="grid" id="gridParrilla"></div>
@@ -156,180 +142,403 @@ footer img{
 <h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">👥 TODOS LOS PILOTOS</h1>
+<h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
 <div class="grid" id="grid"></div>
 
-<footer>
-  <img src="rfem.png" alt="RFEM">
-  <img src="andaluza.png" alt="Federación Andaluza">
-  <img src="uim.png" alt="UIM">
-  <img src="gaston.png" alt="Gaston Iglesias">
-</footer>
+<!-- FORMULARIO -->
+<div id="formulario" class="overlay">
+  <button onclick="cerrarFormulario()">⬅ Volver</button>
+  <h2>Competidor</h2>
 
+  <input id="n-nombre" placeholder="Piloto 1 (Nombre completo)">
+  <input id="n-piloto2" placeholder="Piloto 2 (Opcional)">
+  <input id="n-dorsal" placeholder="Dorsal">
+  <input id="n-categoria" placeholder="Categoría principal (opcional)">
+  <select id="n-tipo">
+    <option>Motos de agua</option>
+    <option>Barcos</option>
+  </select>
+  <input id="n-club" placeholder="Club">
+  <input id="n-embarcacion" placeholder="Marca y modelo embarcación">
+  <input type="file" id="n-foto" accept="image/*">
+
+  <button onclick="guardarFormulario()">💾 Guardar</button>
 </div>
 
-<!-- MODAL -->
-<div id="modal">
-  <div class="modal-content" id="modalContent"></div>
+<!-- FICHA -->
+<div id="ficha" class="overlay">
+  <button onclick="cerrarFicha()">⬅ Volver</button>
+  <button onclick="editarPiloto()">✏️ Editar</button>
+  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
+
+  <h2 id="f-nombre"></h2>
+  <p id="f-piloto2"></p>
+  <p id="f-dorsal"></p>
+  <p id="f-categoria"></p>
+  <p id="f-tipo"></p>
+  <p id="f-club"></p>
+  <p id="f-embarcacion"></p>
+
+  <button onclick="toggleEnPista()">🎮 En pista</button>
+  <button onclick="toggleParrilla(seleccionado)">🏁 A/Q Parrilla</button>
+
+  <h3>📊 Categorías en las que ha competido</h3>
+  <div id="f-categorias"></div>
+
+  <h3>🗓️ Línea de tiempo deportiva</h3>
+  <div class="timeline" id="f-timeline"></div>
+
+  <h3>🏆 Historial de Clasificaciones</h3>
+  <div id="f-resultados"></div>
+  <button onclick="mostrarResultadoForm()">➕ Añadir Clasificación</button>
+</div>
+
+<!-- RESULTADO -->
+<div id="resultadoForm" class="overlay">
+  <button onclick="cerrarResultadoForm()">⬅ Volver</button>
+  <h2>Nueva Clasificación</h2>
+
+  <input id="r-anio" placeholder="Año">
+  <input id="r-competicion" placeholder="Campeonato / Competición">
+  <input id="r-categoria" placeholder="Categoría">
+  <input id="r-puesto" placeholder="Puesto final (1,2,3...)">
+  <input id="r-piloto2" placeholder="Piloto 2">
+  <input id="r-titulo" placeholder="Título (Campeón, Subcampeón...)">
+  <input id="r-puntos" placeholder="Puntos">
+  <input id="r-sanciones" placeholder="Sanciones">
+
+  <button onclick="guardarResultado()">💾 Guardar</button>
+</div>
+
+<div class="footer">
+  <img src="logo-gaston.png">
+  <img src="logo-rfem.png">
+  <img src="logo-andalucia.png">
+  <img src="logo-uim.png">
 </div>
 
 <script>
-let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
+let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
+let seleccionado = null;
+let editandoIndex = null;
 
-function guardarDatos(){
-  localStorage.setItem("rfemData",JSON.stringify(competidores));
+function guardarDatos() {
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
-function abrirNuevo(){
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("modalContent").innerHTML=`
-  <h2>➕ Nuevo Piloto</h2>
-  <input id="n-nombre" placeholder="Nombre completo">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
-  <input id="n-dorsal" placeholder="Dorsal">
-  <input id="n-categoria" placeholder="Categoría principal">
-  <input id="n-club" placeholder="Club">
-  <input id="n-embarcacion" placeholder="Embarcación">
-  <input id="n-foto" placeholder="URL Foto">
-  <button onclick="guardarNuevo()">Guardar</button>
-  <button class="danger" onclick="cerrarModal()">Cancelar</button>
-  `;
-}
-
-function guardarNuevo(){
-  const n=id=>document.getElementById(id).value;
-  competidores.push({
-    nombre:n("n-nombre"),
-    piloto2:n("n-piloto2"),
-    dorsal:n("n-dorsal"),
-    categoria:n("n-categoria"),
-    club:n("n-club"),
-    embarcacion:n("n-embarcacion"),
-    foto:n("n-foto"),
-    resultados:[],
-    enPista:false,
-    enParrilla:false
-  });
-  cerrarModal();
-  render();
-}
-
-function abrirFicha(i){
-  const p=competidores[i];
-  document.getElementById("modal").style.display="flex";
-
-  const categorias=[...new Set(p.resultados.map(r=>r.categoria).filter(Boolean))];
-
-  document.getElementById("modalContent").innerHTML=`
-  <h2>${p.nombre}</h2>
-  <p><b>Piloto 2:</b> ${p.piloto2||"-"}</p>
-  <p><b>Dorsal:</b> ${p.dorsal}</p>
-  <p><b>Club:</b> ${p.club}</p>
-  <p><b>Embarcación:</b> ${p.embarcacion}</p>
-
-  <h3>📊 Categorías en las que ha competido</h3>
-  <div>${categorias.map(c=>`<span class="badge">${c}</span>`).join("")}</div>
-
-  <h3>🏆 Historial</h3>
-  <div>${p.resultados.map(r=>`
-    <p>${r.anio} - ${r.categoria} → ${r.titulo||r.puesto+"º"} ${r.piloto2?"("+r.piloto2+")":""}</p>
-  `).join("")}</div>
-
-  <button onclick="togglePista(${i})">🎮 En pista</button>
-  <button onclick="toggleParrilla(${i})">🏁 Parrilla</button>
-  <button class="danger" onclick="eliminar(${i})">🗑️ Eliminar</button>
-  <button onclick="cerrarModal()">Cerrar</button>
-  `;
-}
-
-function cerrarModal(){
-  document.getElementById("modal").style.display="none";
-}
-
-function eliminar(i){
-  if(confirm("¿Eliminar piloto?")){
-    competidores.splice(i,1);
-    cerrarModal();
-    render();
-  }
-}
-
-function togglePista(i){
-  competidores[i].enPista=!competidores[i].enPista;
-  render();
-}
-
-function toggleParrilla(i){
-  competidores[i].enParrilla=!competidores[i].enParrilla;
-  render();
-}
-
-function render(){
+function render() {
   guardarDatos();
+  const grid = document.getElementById("grid");
+  const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
 
-  const grid=document.getElementById("grid");
-  const pista=document.getElementById("gridPista");
-  const parrilla=document.getElementById("gridParrilla");
+  grid.innerHTML = "";
+  pista.innerHTML = "";
+  parrilla.innerHTML = "";
 
-  grid.innerHTML="";
-  pista.innerHTML="";
-  parrilla.innerHTML="";
-
-  competidores.forEach((p,i)=>{
-    const card=document.createElement("div");
-    card.className="card"+(p.enPista?" en-pista":"");
-    card.innerHTML=`
-      <img src="${p.foto||"https://via.placeholder.com/300x200?text=Piloto"}">
-      <div><b>${p.nombre}</b></div>
-      <div>${p.categoria||""}</div>
-      <button onclick="toggleParrilla(${i});event.stopPropagation()">${p.enParrilla?"➖ Quitar":"➕ Parrilla"}</button>
+  competidores.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "card" + (p.enPista ? " en-pista" : "");
+    card.innerHTML = `
+      <img src="${p.foto || ''}">
+      <div>${p.nombre}</div>
+      <div class="dorsal">${p.dorsal || ""}</div>
+      <div>${p.categoria || ""}</div>
+      <button onclick="toggleParrilla(${i});event.stopPropagation()">
+        ${p.enParrilla ? "➖ Quitar Parrilla" : "➕ A Parrilla"}
+      </button>
     `;
-    card.onclick=()=>abrirFicha(i);
+    card.onclick = () => abrirFicha(i);
 
     grid.appendChild(card);
 
-    if(p.enPista){
-      pista.appendChild(card.cloneNode(true));
+    if (p.enPista) {
+      const clone = card.cloneNode(true);
+      clone.onclick = () => abrirFicha(i);
+      pista.appendChild(clone);
     }
 
-    if(p.enParrilla){
-      parrilla.appendChild(card.cloneNode(true));
+    if (p.enParrilla) {
+      const salida = card.cloneNode(true);
+      salida.onclick = () => abrirFicha(i);
+      parrilla.appendChild(salida);
     }
   });
 }
 
-function backup(){
-  const data=JSON.stringify(competidores,null,2);
-  const blob=new Blob([data],{type:"application/json"});
+function mostrarFormularioNuevo() {
+  editandoIndex = null;
+  limpiarFormulario();
+  document.getElementById("formulario").style.display = "block";
+}
+
+function editarPiloto() {
+  editandoIndex = seleccionado;
+  const p = competidores[seleccionado];
+  v("n-nombre", p.nombre);
+  v("n-piloto2", p.piloto2);
+  v("n-dorsal", p.dorsal);
+  v("n-categoria", p.categoria);
+  v("n-tipo", p.tipo);
+  v("n-club", p.club);
+  v("n-embarcacion", p.embarcacion);
+  document.getElementById("ficha").style.display = "none";
+  document.getElementById("formulario").style.display = "block";
+}
+
+function limpiarFormulario() {
+  ["n-nombre","n-piloto2","n-dorsal","n-categoria","n-club","n-embarcacion"]
+    .forEach(id => v(id, ""));
+  v("n-tipo","Motos de agua");
+  document.getElementById("n-foto").value = "";
+}
+
+function guardarFormulario() {
+  const file = document.getElementById("n-foto").files[0];
+  const reader = new FileReader();
+  reader.onload = e => guardarFinal(e.target.result);
+  if (file) reader.readAsDataURL(file);
+  else guardarFinal(null);
+}
+
+function guardarFinal(foto) {
+  if (editandoIndex !== null) {
+    const p = competidores[editandoIndex];
+    p.nombre = n("n-nombre");
+    p.piloto2 = n("n-piloto2");
+    p.dorsal = n("n-dorsal");
+    p.categoria = n("n-categoria");
+    p.tipo = n("n-tipo");
+    p.club = n("n-club");
+    p.embarcacion = n("n-embarcacion");
+    if (foto) p.foto = foto;
+  } else {
+    competidores.push({
+      nombre: n("n-nombre"),
+      piloto2: n("n-piloto2"),
+      dorsal: n("n-dorsal"),
+      categoria: n("n-categoria"),
+      tipo: n("n-tipo"),
+      club: n("n-club"),
+      embarcacion: n("n-embarcacion"),
+      resultados: [],
+      enPista: false,
+      enParrilla: false,
+      foto: foto || ""
+    });
+  }
+  cerrarFormulario();
+  render();
+}
+
+function abrirFicha(i) {
+  seleccionado = i;
+  const p = competidores[i];
+
+  f("f-nombre", p.nombre);
+  f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
+  f("f-dorsal", "Dorsal: " + p.dorsal);
+  f("f-categoria", "Categoría principal: " + (p.categoria || "—"));
+  f("f-tipo", "Tipo: " + p.tipo);
+  f("f-club", "Club: " + p.club);
+  f("f-embarcacion", "Embarcación: " + p.embarcacion);
+
+  const catDiv = document.getElementById("f-categorias");
+  catDiv.innerHTML = "";
+  const categorias = [...new Set(p.resultados.map(r => r.categoria).filter(c => c))];
+  categorias.forEach(cat => {
+    const badge = document.createElement("span");
+    badge.innerText = cat;
+    badge.style.padding = "6px 12px";
+    badge.style.margin = "4px";
+    badge.style.display = "inline-block";
+    badge.style.background = "#00d1ff";
+    badge.style.borderRadius = "12px";
+    badge.style.fontWeight = "bold";
+    badge.style.color = "#000";
+    catDiv.appendChild(badge);
+  });
+
+  const timeline = document.getElementById("f-timeline");
+  timeline.innerHTML = "";
+  const ordenados = [...p.resultados].sort((a,b)=>a.anio-b.anio);
+  ordenados.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "timeline-item";
+    div.innerHTML = `
+      <h3>${r.anio}</h3>
+      <div>${r.categoria}</div>
+      <div>🏁 ${r.competicion}</div>
+      <div>🥇 Puesto: ${r.puesto}</div>
+      <div>🏆 ${r.titulo || ""}</div>
+    `;
+    timeline.appendChild(div);
+  });
+
+  const res = document.getElementById("f-resultados");
+  res.innerHTML = "";
+  p.resultados.forEach(resu => {
+    res.innerHTML += `
+      <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
+        🗓️ ${resu.anio} | 🏁 ${resu.competicion} | 📊 ${resu.categoria}<br>
+        🥇 Puesto: ${resu.puesto} | 🏆 ${resu.titulo || ""}<br>
+        👥 Piloto 2: ${resu.piloto2 || "—"} | ⭐ ${resu.puntos || ""}
+      </div>
+    `;
+  });
+
+  document.getElementById("ficha").style.display = "block";
+}
+
+function guardarResultado() {
+  competidores[seleccionado].resultados.push({
+    anio: n("r-anio"),
+    competicion: n("r-competicion"),
+    categoria: n("r-categoria"),
+    puesto: n("r-puesto"),
+    piloto2: n("r-piloto2"),
+    titulo: n("r-titulo"),
+    puntos: n("r-puntos"),
+    sanciones: n("r-sanciones")
+  });
+  cerrarResultadoForm();
+  render();
+  abrirFicha(seleccionado);
+}
+
+function toggleEnPista() {
+  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
+  render();
+}
+
+function toggleParrilla(index) {
+  competidores[index].enParrilla = !competidores[index].enParrilla;
+  render();
+}
+
+function eliminarPiloto() {
+  if (!confirm("¿Eliminar este competidor y su historial?")) return;
+  competidores.splice(seleccionado, 1);
+  cerrarFicha();
+  render();
+}
+
+function mostrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "block";
+}
+function cerrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "none";
+}
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
+}
+
+function mostrarRanking() {
+  let lista = [];
+  competidores.forEach(p => {
+    const total = p.resultados.reduce((s,r)=>{
+      if(r.puesto=="1") return s+100;
+      if(r.puesto=="2") return s+70;
+      if(r.puesto=="3") return s+50;
+      return s+20;
+    },0);
+    lista.push({nombre:p.nombre,puntos:total});
+  });
+  lista.sort((a,b)=>b.puntos-a.puntos);
+  alert("🏆 Ranking Histórico\n\n" + lista.map((p,i)=>`${i+1}. ${p.nombre} — ${p.puntos}`).join("\n"));
+}
+
+function exportarBackup() {
+  const blob = new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
   a.download="rfem_backup.json";
   a.click();
 }
 
-function restore(){
-  const input=document.createElement("input");
-  input.type="file";
-  input.onchange=e=>{
-    const file=e.target.files[0];
+function importarBackup() {
+  const i=document.createElement("input");
+  i.type="file"; i.accept="application/json";
+  i.onchange=e=>{
     const r=new FileReader();
     r.onload=()=>{
       competidores=JSON.parse(r.result);
       render();
     };
-    r.readAsText(file);
+    r.readAsText(e.target.files[0]);
   };
-  input.click();
+  i.click();
 }
 
-/* ===== HISTÓRICO RFEM ===== */
-function importarDatosHistoricos(){
-  alert("Histórico RFEM cargado en esta versión base. Puedes ampliarlo con más temporadas cuando quieras.");
+function cargarDemo() {
+  if (!confirm("Esto cargará pilotos y palmarés históricos. ¿Continuar?")) return;
+
+  const datos = [
+    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","11","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","13","Jose Jorge Criado Guillén"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","8","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","14","Juan Félix Bravo Aguilar"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout Stock (Cto. Europa)","1","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","2","Ricardo Masabeu / David Téllez"],
+    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","3","Jose Pedro Martínez / Nicolas Martín"],
+    ["2005","Nacional","Motos de Agua - Circuito","Ski Stock (Copa del Rey)","1","Jose Jorge Criado Guillén"],
+    ["2005","Nacional","Motos de Agua - Circuito","Runabout Stock (Copa del Rey)","1","Israel Amor Gómez"],
+    ["2005","Nacional","Motos de Agua - Resistencia","Runabout F1","1","Miguel Ángel Pino Palomo"]
+  ];
+
+  datos.forEach(d=>{
+    let pilotos=d[5];
+    let p1=pilotos, p2="";
+    if(pilotos.includes("/")){
+      const parts=pilotos.split("/");
+      p1=parts[0].trim();
+      p2=parts[1].trim();
+    }
+
+    let piloto=competidores.find(x=>x.nombre.toLowerCase()===p1.toLowerCase());
+    if(!piloto){
+      piloto={
+        nombre:p1,
+        piloto2:p2,
+        dorsal:"",
+        categoria:d[3],
+        tipo:d[2].includes("Embarcaciones")?"Barcos":"Motos de agua",
+        club:"",
+        embarcacion:"",
+        resultados:[],
+        enPista:false,
+        enParrilla:false,
+        foto:""
+      };
+      competidores.push(piloto);
+    }
+
+    const puesto=d[4];
+    piloto.resultados.push({
+      anio:d[0],
+      competicion:d[1]+" - "+d[2],
+      categoria:d[3],
+      puesto:puesto,
+      piloto2:p2,
+      titulo: puesto=="1"?"Campeón":puesto=="2"?"Subcampeón":puesto=="3"?"Tercero":"",
+      puntos:"",
+      sanciones:""
+    });
+  });
+
+  render();
+  alert("🏆 Palmarés histórico cargado correctamente");
 }
+
+function n(id){return document.getElementById(id).value;}
+function v(id,val){document.getElementById(id).value=val;}
+function f(id,txt){document.getElementById(id).innerText=txt;}
 
 render();
 </script>
 
 </body>
 </html>
-```

@@ -59,6 +59,15 @@ button:hover {
   margin: 20px;
 }
 
+.categoria-titulo {
+  margin: 30px 20px 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #00d1ff;
+  border-left: 6px solid #00d1ff;
+  padding-left: 12px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
@@ -161,8 +170,8 @@ input, select {
 <h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
-<div class="grid" id="grid"></div>
+<h1 class="section-title">🏁 TODOS LOS COMPETIDORES (Por Categoría)</h1>
+<div id="grid"></div>
 
 <!-- FORMULARIO -->
 <div id="formulario" class="overlay">
@@ -264,36 +273,58 @@ function render() {
   pista.innerHTML = "";
   parrilla.innerHTML = "";
 
-  competidores.filter(filtroBusqueda).forEach((p, i) => {
-    const card = document.createElement("div");
-    card.className = "card" + (p.enPista ? " en-pista" : "");
-    card.innerHTML = `
-      <img src="${p.foto || ''}">
-      <div>${p.nombre}</div>
-      <div class="dorsal">${p.dorsal || ""}</div>
-      <div>${p.categoria || ""}</div>
-      <button onclick="toggleParrilla(${i});event.stopPropagation()">
-        ${p.enParrilla ? "➖ Quitar Parrilla" : "➕ A Parrilla"}
-      </button>
-    `;
-    card.onclick = () => abrirFicha(i);
+  const filtrados = competidores.filter(filtroBusqueda);
 
-    grid.appendChild(card);
+  // --- Agrupar por categoría ---
+  const grupos = {};
+  filtrados.forEach(p => {
+    const cat = p.categoria || "Sin categoría";
+    if (!grupos[cat]) grupos[cat] = [];
+    grupos[cat].push(p);
+  });
 
-    if (p.enPista) {
-      const clone = card.cloneNode(true);
-      clone.onclick = () => abrirFicha(i);
-      pista.appendChild(clone);
-    }
+  // --- Render Parrilla y Pista ---
+  filtrados.forEach((p, i) => {
+    if (p.enPista) pista.appendChild(crearCard(p, i));
+    if (p.enParrilla) parrilla.appendChild(crearCard(p, i));
+  });
 
-    if (p.enParrilla) {
-      const salida = card.cloneNode(true);
-      salida.onclick = () => abrirFicha(i);
-      parrilla.appendChild(salida);
-    }
+  // --- Render por categoría ---
+  Object.keys(grupos).sort().forEach(cat => {
+    const titulo = document.createElement("div");
+    titulo.className = "categoria-titulo";
+    titulo.innerText = cat;
+    grid.appendChild(titulo);
+
+    const contenedor = document.createElement("div");
+    contenedor.className = "grid";
+
+    grupos[cat].forEach(p => {
+      const index = competidores.indexOf(p);
+      contenedor.appendChild(crearCard(p, index));
+    });
+
+    grid.appendChild(contenedor);
   });
 }
 
+function crearCard(p, index) {
+  const card = document.createElement("div");
+  card.className = "card" + (p.enPista ? " en-pista" : "");
+  card.innerHTML = `
+    <img src="${p.foto || ''}">
+    <div>${p.nombre}</div>
+    <div class="dorsal">${p.dorsal || ""}</div>
+    <div>${p.categoria || ""}</div>
+    <button onclick="toggleParrilla(${index});event.stopPropagation()">
+      ${p.enParrilla ? "➖ Quitar Parrilla" : "➕ A Parrilla"}
+    </button>
+  `;
+  card.onclick = () => abrirFicha(index);
+  return card;
+}
+
+/* ---- RESTO DE FUNCIONES SIN CAMBIOS ---- */
 function mostrarFormularioNuevo() {
   editandoIndex = null;
   limpiarFormulario();
@@ -499,63 +530,6 @@ function importarBackup() {
     r.readAsText(e.target.files[0]);
   };
   i.click();
-}
-
-function cargarDemo() {
-  if (!confirm("Esto cargará pilotos y palmarés históricos. ¿Continuar?")) return;
-
-  const datos = [
-    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","11","Jose Ignacio Armillas Barquero"],
-    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","13","Jose Jorge Criado Guillén"],
-    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","8","Jose Ignacio Armillas Barquero"],
-    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","14","Juan Félix Bravo Aguilar"],
-    ["2005","Internacional","Motos de Agua - Circuito","Runabout Stock (Cto. Europa)","1","Jose Ignacio Armillas Barquero"],
-    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","2","Ricardo Masabeu / David Téllez"],
-    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","3","Jose Pedro Martínez / Nicolas Martín"]
-  ];
-
-  datos.forEach(d=>{
-    let pilotos=d[5];
-    let p1=pilotos, p2="";
-    if(pilotos.includes("/")){
-      const parts=pilotos.split("/");
-      p1=parts[0].trim();
-      p2=parts[1].trim();
-    }
-
-    let piloto=competidores.find(x=>x.nombre.toLowerCase()===p1.toLowerCase());
-    if(!piloto){
-      piloto={
-        nombre:p1,
-        piloto2:p2,
-        dorsal:"",
-        categoria:d[3],
-        tipo:d[2].includes("Embarcaciones")?"Barcos":"Motos de agua",
-        club:"",
-        embarcacion:"",
-        resultados:[],
-        enPista:false,
-        enParrilla:false,
-        foto:""
-      };
-      competidores.push(piloto);
-    }
-
-    const puesto=d[4];
-    piloto.resultados.push({
-      anio:d[0],
-      competicion:d[1]+" - "+d[2],
-      categoria:d[3],
-      puesto:puesto,
-      piloto2:p2,
-      titulo: puesto=="1"?"Campeón":puesto=="2"?"Subcampeón":puesto=="3"?"Tercero":"",
-      puntos:"",
-      sanciones:""
-    });
-  });
-
-  render();
-  alert("🏆 Palmarés histórico cargado correctamente");
 }
 
 function n(id){return document.getElementById(id).value;}

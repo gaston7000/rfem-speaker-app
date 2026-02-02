@@ -1,194 +1,434 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>RFEM Speaker PRO - Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>RFEM Speaker PRO</title>
 
-    <style>
-        :root {
-            --primary: #22d3ee;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #facc15;
-            --dark-bg: #0a192f;
-            --card-bg: rgba(255, 255, 255, 0.1);
-        }
+<style>
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #05070f;
+  color: white;
+}
 
-        body {
-            background: linear-gradient(135deg, #0a192f, #112240);
-            color: #ffffff;
-            margin: 0;
-            padding-bottom: 50px;
-        }
+/* ===== APP LAYOUT ===== */
+#app {
+  padding: 20px;
+}
 
-        /* MODO DÍA (ALTO CONTRASTE) */
-        body.light-mode {
-            background: #f0f2f5;
-            color: #1a1a1a;
-        }
-        body.light-mode .card { background: #ffffff; color: #1a1a1a; border: 1px solid #ddd; }
-        body.light-mode .modal-box { background: #ffffff; color: #1a1a1a; }
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
 
-        /* HEADER & TOOLBAR */
-        #header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 25px;
-            background: rgba(0,0,0,0.3);
-        }
+.section-title {
+  margin: 30px 0 10px;
+  font-size: 1.5rem;
+}
 
-        #header img { height: 45px; }
+/* ===== BOTONES ===== */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
 
-        .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 20px;
-            justify-content: center;
-            background: rgba(255,255,255,0.05);
-        }
+button {
+  background: #00cfff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-        /* BUSCADOR PRO */
-        .search-container {
-            padding: 0 20px;
-            margin-bottom: 20px;
-        }
-        #mainSearch {
-            width: 100%;
-            padding: 18px;
-            border-radius: 12px;
-            border: 2px solid var(--primary);
-            background: rgba(255,255,255,0.1);
-            color: white;
-            font-size: 1.2rem;
-        }
-        body.light-mode #mainSearch { background: white; color: black; }
+button:hover {
+  opacity: 0.85;
+}
 
-        /* CRONÓMETRO */
-        #timer-display {
-            font-family: monospace;
-            font-size: 2rem;
-            background: #000;
-            color: var(--warning);
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-left: 15px;
-        }
+.danger {
+  background: #ff3b3b;
+}
 
-        /* GRID & CARDS */
-        .section-title { padding-left: 25px; border-left: 5px solid var(--primary); margin: 30px 0 15px; }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-            padding: 0 20px;
-        }
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
 
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 18px;
-            padding: 15px;
-            position: relative;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .card:hover { transform: translateY(-5px); border: 1px solid var(--primary); }
-        .card.en-pista { border: 3px solid var(--success); box-shadow: 0 0 15px var(--success); }
-        .card.en-parrilla { border: 3px solid var(--warning); }
+/* ===== CARD ===== */
+.card {
+  background: #0e1324;
+  border-radius: 20px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
 
-        .card img { width: 100%; height: 140px; object-fit: cover; border-radius: 12px; }
-        .dorsal-tag {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: var(--primary);
-            color: #000;
-            font-weight: 900;
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 1.4rem;
-        }
+.card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 20px #00cfff55;
+}
 
-        /* BOTONES */
-        button {
-            padding: 12px 18px;
-            border-radius: 10px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-main { background: var(--primary); color: #000; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-timer { background: #334155; color: white; }
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
+}
 
-        /* MODAL & SPEAKER */
-        #modal, #speaker {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+.dorsal {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 6px 0;
+}
 
-        .modal-box {
-            background: #0f172a;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
+/* ===== STATUS ===== */
+.en-pista {
+  outline: 4px solid #00ff7f;
+  box-shadow: 0 0 20px #00ff7f;
+}
 
-        #speaker { background: #000; flex-direction: column; padding: 40px; text-align: center; }
-        #speaker h1 { font-size: 4rem; color: var(--primary); margin: 0; }
-        #speaker .stats { font-size: 2rem; margin: 20px 0; line-height: 1.4; }
-        #speaker .history-box { background: #111; padding: 20px; border-radius: 15px; border-left: 8px solid var(--primary); text-align: left; width: 100%; }
+.en-parrilla {
+  outline: 4px solid #ffd000;
+}
 
-        .badge { background: #334155; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; margin-right: 5px; }
-    </style>
+/* ===== MODAL ===== */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #0b1020;
+  border-radius: 24px;
+  padding: 20px;
+  width: 90%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+}
+
+.badge {
+  display: inline-block;
+  background: #00cfff;
+  color: #000;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+/* ===== SPEAKER MODE ===== */
+#speaker {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  display: none;
+  z-index: 1000;
+  padding: 40px;
+}
+
+#speaker h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+#speaker p {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+#speaker button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: red;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+footer img {
+  height: 50px;
+  margin: 0 15px;
+  opacity: 0.9;
+}
+</style>
 </head>
 <body>
 
-<div id="header">
-    <div style="display:flex; align-items:center;">
-        <img src="https://via.placeholder.com/150x50?text=RFEM+LOGO" alt="RFEM">
-        <div id="timer-display">00:00</div>
-    </div>
-    <div>
-        <button class="btn-timer" onclick="toggleTimer()">⏱️ Start/Stop</button>
-        <button class="btn-timer" onclick="resetTimer()">🔄 Reset</button>
-        <button onclick="document.body.classList.toggle('light-mode')">🌓 Modo Día</button>
-    </div>
-</div>
+<div id="app">
+
+<h1>🎙️ RFEM SPEAKER PRO</h1>
 
 <div class="toolbar">
-    <button class="btn-main" onclick="nuevoPiloto()">➕ Añadir Piloto</button>
-    <button class="btn-main" style="background: var(--success);" onclick="modoSpeaker()">🎙️ MODO SPEAKER</button>
-    <button onclick="backup()">💾 Backup</button>
-    <button class="btn-danger" onclick="limpiarTodo()">🗑️ Reset App</button>
+  <button onclick="nuevoPiloto()">➕ Nuevo Piloto</button>
+  <button onclick="modoSpeaker()">🎙️ Modo Speaker</button>
+  <button onclick="backup()">☁️ Backup</button>
+  <button onclick="restore()">♻️ Restaurar</button>
 </div>
 
-<div class="search-container">
-    <input type="text" id="mainSearch" placeholder="🔍 BUSCAR POR DORSAL, NOMBRE O CATEGORÍA..." onkeyup="render()">
-</div>
+<h2 class="section-title">🏁 Parrilla de salida</h2>
+<div class="grid" id="gridParrilla"></div>
 
-<h2 class="section-title">🎮 EN PISTA / PARRILLA</h2>
+<h2 class="section-title">🎮 Pilotos en pista</h2>
 <div class="grid" id="gridPista"></div>
 
-<h2 class="section-title">👥 TODOS LOS PILOTOS</h2>
+<h2 class="section-title">👥 Todos los pilotos</h2>
 <div class="grid" id="grid"></div>
 
-<div id="modal">
-    <div class="modal-box" id="modalBox"></div>
+<footer>
+  <img src="rfem.png">
+  <img src="andaluza.png">
+  <img src="uim.png">
+  <img src="gaston.png">
+</footer>
+
 </div>
 
-<div id="speaker"
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- SPEAKER -->
+<div id="speaker">
+  <button onclick="cerrarSpeaker()">✖ Cerrar</button>
+  <h1 id="spNombre"></h1>
+  <p id="spTexto"></p>
+</div>
+
+<script>
+let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
+
+/* ===== UTIL ===== */
+function guardar() {
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
+}
+
+function mostrarModal(html) {
+  document.getElementById("modalBox").innerHTML = html;
+  document.getElementById("modal").style.display = "flex";
+}
+
+function cerrarModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+/* ===== RENDER ===== */
+function render() {
+  guardar();
+
+  const grid = document.getElementById("grid");
+  const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
+
+  grid.innerHTML = "";
+  pista.innerHTML = "";
+  parrilla.innerHTML = "";
+
+  competidores.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "card" +
+      (p.enPista ? " en-pista" : "") +
+      (p.enParrilla ? " en-parrilla" : "");
+
+    card.innerHTML = `
+      <img src="${p.foto || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwY2ZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UElMT1RPPC90ZXh0Pjwvc3ZnPg=="}">
+      <div><b>${p.nombre}</b></div>
+      <div class="dorsal">${p.dorsal || ""}</div>
+      <div>${p.categoria || ""}</div>
+      <button onclick="toggleParrilla(${i});event.stopPropagation()">
+        ${p.enParrilla ? "➖ Quitar" : "➕ Parrilla"}
+      </button>
+    `;
+
+    card.onclick = () => abrirFicha(i);
+
+    grid.appendChild(card);
+
+    if (p.enPista) pista.appendChild(card.cloneNode(true));
+    if (p.enParrilla) parrilla.appendChild(card.cloneNode(true));
+  });
+}
+
+/* ===== PILOTOS ===== */
+function nuevoPiloto() {
+  mostrarModal(`
+    <h2>➕ Nuevo Piloto</h2>
+    <input id="n-nombre" placeholder="Nombre completo">
+    <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+    <input id="n-dorsal" placeholder="Dorsal">
+    <input id="n-categoria" placeholder="Categoría principal">
+    <input id="n-club" placeholder="Club">
+    <input id="n-embarcacion" placeholder="Embarcación">
+    <input id="n-foto" placeholder="URL Foto (opcional)">
+    <button onclick="guardarNuevo()">Guardar</button>
+    <button class="danger" onclick="cerrarModal()">Cancelar</button>
+  `);
+}
+
+function guardarNuevo() {
+  const v = id => document.getElementById(id).value;
+  competidores.push({
+    nombre: v("n-nombre"),
+    piloto2: v("n-piloto2"),
+    dorsal: v("n-dorsal"),
+    categoria: v("n-categoria"),
+    club: v("n-club"),
+    embarcacion: v("n-embarcacion"),
+    foto: v("n-foto"),
+    resultados: [],
+    enPista: false,
+    enParrilla: false
+  });
+  cerrarModal();
+  render();
+}
+
+function abrirFicha(i) {
+  const p = competidores[i];
+  const categorias = [...new Set(p.resultados.map(r => r.categoria).filter(Boolean))];
+
+  mostrarModal(`
+    <h2>${p.nombre}</h2>
+    <p><b>Piloto 2:</b> ${p.piloto2 || "-"}</p>
+    <p><b>Dorsal:</b> ${p.dorsal}</p>
+    <p><b>Club:</b> ${p.club}</p>
+    <p><b>Embarcación:</b> ${p.embarcacion}</p>
+
+    <h3>📊 Categorías</h3>
+    <div>${categorias.map(c => `<span class="badge">${c}</span>`).join("")}</div>
+
+    <h3>🏆 Historial</h3>
+    <div>
+      ${p.resultados.map(r => `
+        <p>${r.anio} - ${r.categoria} → ${r.titulo || r.puesto + "º"} ${r.piloto2 ? "(" + r.piloto2 + ")" : ""}</p>
+      `).join("") || "<p>Sin resultados cargados</p>"}
+    </div>
+
+    <button onclick="togglePista(${i})">🎮 En pista</button>
+    <button onclick="toggleParrilla(${i})">🏁 Parrilla</button>
+    <button class="danger" onclick="eliminarPiloto(${i})">🗑️ Eliminar</button>
+    <button onclick="cerrarModal()">Cerrar</button>
+  `);
+}
+
+function eliminarPiloto(i) {
+  if (confirm("¿Eliminar piloto y todo su historial?")) {
+    competidores.splice(i, 1);
+    cerrarModal();
+    render();
+  }
+}
+
+function togglePista(i) {
+  competidores[i].enPista = !competidores[i].enPista;
+  render();
+}
+
+function toggleParrilla(i) {
+  competidores[i].enParrilla = !competidores[i].enParrilla;
+  render();
+}
+
+/* ===== SPEAKER ===== */
+function modoSpeaker() {
+  const lista = competidores.filter(p => p.enParrilla || p.enPista);
+  if (!lista.length) {
+    alert("Selecciona pilotos en parrilla o en pista primero.");
+    return;
+  }
+
+  let i = 0;
+  const sp = document.getElementById("speaker");
+  const nombre = document.getElementById("spNombre");
+  const texto = document.getElementById("spTexto");
+
+  function mostrar() {
+    const p = lista[i];
+    nombre.innerText = p.nombre;
+    texto.innerText =
+      `Dorsal ${p.dorsal || "sin número"}.\n` +
+      `Categoría: ${p.categoria || "no especificada"}.\n` +
+      `Club: ${p.club || "no indicado"}.\n` +
+      (p.piloto2 ? `Copiloto: ${p.piloto2}.\n` : "") +
+      `Historial: ${p.resultados.length} clasificaciones registradas.`;
+  }
+
+  sp.onclick = () => {
+    i = (i + 1) % lista.length;
+    mostrar();
+  };
+
+  mostrar();
+  sp.style.display = "block";
+}
+
+function cerrarSpeaker() {
+  document.getElementById("speaker").style.display = "none";
+}
+
+/* ===== BACKUP ===== */
+function backup() {
+  const data = JSON.stringify(competidores, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "rfem_backup.json";
+  a.click();
+}
+
+function restore() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = e => {
+    const r = new FileReader();
+    r.onload = () => {
+      competidores = JSON.parse(r.result);
+      render();
+    };
+    r.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+render();
+</script>
+
+</body>
+</html>

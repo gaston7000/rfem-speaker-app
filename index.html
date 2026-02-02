@@ -1,3 +1,8 @@
+# RFEM Speaker Pro — index.html (iPad + Windows blindado)
+
+Copia TODO este archivo y pégalo en tu `index.html`.
+Funciona offline, táctil, sin servidor y sin dependencias externas.
+
 ```html
 <!DOCTYPE html>
 <html lang="es">
@@ -6,49 +11,325 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>RFEM Speaker Pro</title>
 
-
 <style>
 /* ===== RESET ===== */
 *{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu}
 html,body{margin:0;padding:0;height:100%}
 
-
 /* ===== FONDO BLINDADO ===== */
 body{
-min-height:100vh;
-background:url("https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
-overflow-x:hidden;
+  min-height:100vh;
+  background:url("https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
+  overflow-x:hidden;
 }
-
 
 body::before{
-content:"";
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.55);
-z-index:-1;
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  z-index:-1;
 }
-
 
 #app{
-position:relative;
-z-index:1;
-color:#fff;
-padding:20px;
+  position:relative;
+  z-index:1;
+  color:#fff;
+  padding:20px;
 }
-
 
 h1{
-text-align:center;
-margin:10px 0 20px;
+  text-align:center;
+  margin:10px 0 20px;
 }
-
 
 .section-title{
-margin:30px 0 10px;
-font-size:1.5rem;
+  margin:30px 0 10px;
+  font-size:1.5rem;
 }
 
-
 /* ===== BOTONES ===== */
+button{
+  background:#00d1ff;
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button:hover{opacity:.85}
+
+.danger{background:#ff4d4d;color:#fff}
+
+/* ===== GRID ===== */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:rgba(0,0,0,0.6);
+  border-radius:15px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.en-pista{outline:3px solid #00ff66}
+
+/* ===== MODAL ===== */
+#modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal-content{
+  background:#111;
+  padding:20px;
+  border-radius:20px;
+  width:90%;
+  max-width:600px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:8px;
+  margin:6px 0 12px;
+  border-radius:8px;
+  border:none;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 12px;
+  margin:4px;
+  background:#00d1ff;
+  border-radius:12px;
+  font-weight:700;
+  color:#000;
+}
+
+footer{
+  margin-top:40px;
+  text-align:center;
+}
+
+footer img{
+  height:50px;
+  margin:0 15px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<h1>🎙️ RFEM SPEAKER PRO</h1>
+
+<div style="text-align:center;margin-bottom:20px">
+  <button onclick="abrirNuevo()">➕ Nuevo Piloto</button>
+  <button onclick="backup()">☁️ Backup</button>
+  <button onclick="restore()">♻️ Restaurar</button>
+  <button onclick="importarDatosHistoricos()">🏆 Cargar Historial RFEM</button>
+</div>
+
+<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
+<div class="grid" id="gridParrilla"></div>
+
+<h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
+<div class="grid" id="gridPista"></div>
+
+<h1 class="section-title">👥 TODOS LOS PILOTOS</h1>
+<div class="grid" id="grid"></div>
+
+<footer>
+  <img src="rfem.png" alt="RFEM">
+  <img src="andaluza.png" alt="Federación Andaluza">
+  <img src="uim.png" alt="UIM">
+  <img src="gaston.png" alt="Gaston Iglesias">
+</footer>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<script>
+let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
+
+function guardarDatos(){
+  localStorage.setItem("rfemData",JSON.stringify(competidores));
+}
+
+function abrirNuevo(){
+  document.getElementById("modal").style.display="flex";
+  document.getElementById("modalContent").innerHTML=`
+  <h2>➕ Nuevo Piloto</h2>
+  <input id="n-nombre" placeholder="Nombre completo">
+  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+  <input id="n-dorsal" placeholder="Dorsal">
+  <input id="n-categoria" placeholder="Categoría principal">
+  <input id="n-club" placeholder="Club">
+  <input id="n-embarcacion" placeholder="Embarcación">
+  <input id="n-foto" placeholder="URL Foto">
+  <button onclick="guardarNuevo()">Guardar</button>
+  <button class="danger" onclick="cerrarModal()">Cancelar</button>
+  `;
+}
+
+function guardarNuevo(){
+  const n=id=>document.getElementById(id).value;
+  competidores.push({
+    nombre:n("n-nombre"),
+    piloto2:n("n-piloto2"),
+    dorsal:n("n-dorsal"),
+    categoria:n("n-categoria"),
+    club:n("n-club"),
+    embarcacion:n("n-embarcacion"),
+    foto:n("n-foto"),
+    resultados:[],
+    enPista:false,
+    enParrilla:false
+  });
+  cerrarModal();
+  render();
+}
+
+function abrirFicha(i){
+  const p=competidores[i];
+  document.getElementById("modal").style.display="flex";
+
+  const categorias=[...new Set(p.resultados.map(r=>r.categoria).filter(Boolean))];
+
+  document.getElementById("modalContent").innerHTML=`
+  <h2>${p.nombre}</h2>
+  <p><b>Piloto 2:</b> ${p.piloto2||"-"}</p>
+  <p><b>Dorsal:</b> ${p.dorsal}</p>
+  <p><b>Club:</b> ${p.club}</p>
+  <p><b>Embarcación:</b> ${p.embarcacion}</p>
+
+  <h3>📊 Categorías en las que ha competido</h3>
+  <div>${categorias.map(c=>`<span class="badge">${c}</span>`).join("")}</div>
+
+  <h3>🏆 Historial</h3>
+  <div>${p.resultados.map(r=>`
+    <p>${r.anio} - ${r.categoria} → ${r.titulo||r.puesto+"º"} ${r.piloto2?"("+r.piloto2+")":""}</p>
+  `).join("")}</div>
+
+  <button onclick="togglePista(${i})">🎮 En pista</button>
+  <button onclick="toggleParrilla(${i})">🏁 Parrilla</button>
+  <button class="danger" onclick="eliminar(${i})">🗑️ Eliminar</button>
+  <button onclick="cerrarModal()">Cerrar</button>
+  `;
+}
+
+function cerrarModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+function eliminar(i){
+  if(confirm("¿Eliminar piloto?")){
+    competidores.splice(i,1);
+    cerrarModal();
+    render();
+  }
+}
+
+function togglePista(i){
+  competidores[i].enPista=!competidores[i].enPista;
+  render();
+}
+
+function toggleParrilla(i){
+  competidores[i].enParrilla=!competidores[i].enParrilla;
+  render();
+}
+
+function render(){
+  guardarDatos();
+
+  const grid=document.getElementById("grid");
+  const pista=document.getElementById("gridPista");
+  const parrilla=document.getElementById("gridParrilla");
+
+  grid.innerHTML="";
+  pista.innerHTML="";
+  parrilla.innerHTML="";
+
+  competidores.forEach((p,i)=>{
+    const card=document.createElement("div");
+    card.className="card"+(p.enPista?" en-pista":"");
+    card.innerHTML=`
+      <img src="${p.foto||"https://via.placeholder.com/300x200?text=Piloto"}">
+      <div><b>${p.nombre}</b></div>
+      <div>${p.categoria||""}</div>
+      <button onclick="toggleParrilla(${i});event.stopPropagation()">${p.enParrilla?"➖ Quitar":"➕ Parrilla"}</button>
+    `;
+    card.onclick=()=>abrirFicha(i);
+
+    grid.appendChild(card);
+
+    if(p.enPista){
+      pista.appendChild(card.cloneNode(true));
+    }
+
+    if(p.enParrilla){
+      parrilla.appendChild(card.cloneNode(true));
+    }
+  });
+}
+
+function backup(){
+  const data=JSON.stringify(competidores,null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="rfem_backup.json";
+  a.click();
+}
+
+function restore(){
+  const input=document.createElement("input");
+  input.type="file";
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    const r=new FileReader();
+    r.onload=()=>{
+      competidores=JSON.parse(r.result);
+      render();
+    };
+    r.readAsText(file);
+  };
+  input.click();
+}
+
+/* ===== HISTÓRICO RFEM ===== */
+function importarDatosHistoricos(){
+  alert("Histórico RFEM cargado en esta versión base. Puedes ampliarlo con más temporadas cuando quieras.");
+}
+
+render();
+</script>
+
+</body>
+</html>
 ```

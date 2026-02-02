@@ -49,7 +49,6 @@ button:hover {
   text-align: center;
   font-size: 28px;
   margin: 20px;
-  letter-spacing: 1px;
 }
 
 .grid {
@@ -86,7 +85,6 @@ button:hover {
 .dorsal {
   font-size: 36px;
   font-weight: bold;
-  margin: 10px 0;
 }
 
 .categoria {
@@ -94,7 +92,6 @@ button:hover {
   border-radius: 10px;
   display: inline-block;
   font-size: 14px;
-  margin-bottom: 6px;
 }
 
 .overlay {
@@ -107,10 +104,6 @@ button:hover {
   display: none;
   padding: 20px;
   overflow-y: auto;
-}
-
-.overlay h2 {
-  text-align: center;
 }
 
 input, select {
@@ -134,11 +127,6 @@ input, select {
 .footer img {
   height: 60px;
   opacity: 0.85;
-  transition: transform 0.2s;
-}
-
-.footer img:hover {
-  transform: scale(1.1);
 }
 </style>
 </head>
@@ -147,8 +135,8 @@ input, select {
 
 <header>
   <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
-  <button onclick="importarPDF()">📄 Importar RFEM (Resultados)</button>
-  <button onclick="importarMemoria()">🏆 Importar Memoria RFEM (Palmarés)</button>
+  <button onclick="importarPDF()">📄 Importar RFEM</button>
+  <button onclick="importarMemoria()">🏆 Importar Palmarés</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="pantallaPublico()">📺 Pantalla Público</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
@@ -161,20 +149,21 @@ input, select {
 <h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
 <div class="grid" id="grid"></div>
 
-<!-- FORMULARIO COMPETIDOR -->
+<!-- FORMULARIO PILOTO -->
 <div id="formulario" class="overlay">
-  <button onclick="cerrarFormulario()">⬅ Volver a Inicio</button>
-  <h2 id="form-title">Nuevo Competidor</h2>
+  <button onclick="cerrarFormulario()">⬅ Volver</button>
+  <h2 id="form-title">Competidor</h2>
 
-  <input id="n-nombre" placeholder="Nombre completo">
+  <input id="n-nombre" placeholder="Nombre Piloto 1">
   <input id="n-dorsal" placeholder="Dorsal">
-  <input id="n-categoria" placeholder="Categoría (GP2, GT60, etc)">
+  <input id="n-categoria" placeholder="Categoría principal">
+  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
   <select id="n-tipo">
     <option>Motos de agua</option>
     <option>Barcos</option>
   </select>
   <input id="n-club" placeholder="Club">
-  <input id="n-embarcacion" placeholder="Marca y modelo de embarcación">
+  <input id="n-embarcacion" placeholder="Marca y modelo embarcación">
   <input type="file" id="n-foto" accept="image/*">
 
   <button onclick="guardarFormulario()">💾 Guardar</button>
@@ -182,50 +171,50 @@ input, select {
 
 <!-- FICHA -->
 <div id="ficha" class="overlay">
-  <button onclick="cerrarFicha()">⬅ Volver a Inicio</button>
-  <button onclick="editarPiloto()">✏️ Editar Piloto</button>
-  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar Piloto</button>
+  <button onclick="cerrarFicha()">⬅ Volver</button>
+  <button onclick="editarPiloto()">✏️ Editar</button>
+  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
 
   <h2 id="f-nombre"></h2>
-
+  <p id="f-piloto2"></p>
   <p id="f-dorsal"></p>
   <p id="f-categoria"></p>
   <p id="f-tipo"></p>
   <p id="f-club"></p>
   <p id="f-embarcacion"></p>
 
-  <button onclick="toggleEnPista()">🎮 En Pista</button>
-  <button onclick="enlazarFamiliar()">👨‍👩‍👧‍👦 Enlazar Familiar</button>
+  <button onclick="toggleEnPista()">🎮 En pista</button>
 
-  <h3>🏁 Resultados / Palmarés</h3>
+  <h3>🏆 Títulos y Clasificaciones Anuales</h3>
   <div id="f-resultados"></div>
-  <button onclick="mostrarResultadoForm()">➕ Añadir Resultado Manual</button>
+  <button onclick="mostrarResultadoForm()">➕ Añadir Clasificación</button>
 </div>
 
 <!-- RESULTADO -->
 <div id="resultadoForm" class="overlay">
-  <button onclick="cerrarResultadoForm()">⬅ Volver a Ficha</button>
-  <h2>Nuevo Resultado</h2>
+  <button onclick="cerrarResultadoForm()">⬅ Volver</button>
+  <h2>Nueva Clasificación</h2>
 
-  <input id="r-anio" placeholder="Año (2005–2024)">
-  <input id="r-competicion" placeholder="Competición">
-  <input id="r-puesto" placeholder="Puesto">
-  <input id="r-tiempo" placeholder="Tiempo">
-  <input id="r-puntos" placeholder="Puntos">
+  <input id="r-anio" placeholder="Año">
+  <input id="r-competicion" placeholder="Campeonato / Competición">
+  <input id="r-categoria" placeholder="Categoría">
+  <input id="r-puesto" placeholder="Puesto final (1,2,3,4...)">
+  <input id="r-piloto2" placeholder="Piloto 2 (si aplica)">
+  <input id="r-titulo" placeholder="Título obtenido (Campeón, Subcampeón, etc)">
+  <input id="r-tiempo" placeholder="Mejor tiempo">
+  <input id="r-puntos" placeholder="Puntos totales">
   <input id="r-sanciones" placeholder="Sanciones">
 
-  <button onclick="guardarResultado()">💾 Guardar Resultado</button>
+  <button onclick="guardarResultado()">💾 Guardar</button>
 </div>
 
-<!-- INPUT PDF OCULTO -->
 <input type="file" id="pdfInput" accept="application/pdf" style="display:none">
 
-<!-- FOOTER LOGOS -->
 <div class="footer">
-  <img src="logo-gaston.png" alt="Gaston Iglesias Sport Marketing">
-  <img src="logo-rfem.png" alt="RFEM">
-  <img src="logo-andalucia.png" alt="Federación Andaluza Motonáutica">
-  <img src="logo-uim.png" alt="UIM">
+  <img src="logo-gaston.png">
+  <img src="logo-rfem.png">
+  <img src="logo-andalucia.png">
+  <img src="logo-uim.png">
 </div>
 
 <script>
@@ -237,20 +226,13 @@ function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
-function colorCategoria(cat) {
-  if (!cat) return "#00d1ff";
-  const c = cat.toLowerCase();
-  if (c.includes("gp")) return "#ff0055";
-  if (c.includes("gt")) return "#00ff99";
-  return "#00d1ff";
-}
-
 function render() {
   guardarDatos();
   const grid = document.getElementById("grid");
-  const gridPista = document.getElementById("gridPista");
+  const pista = document.getElementById("gridPista");
+
   grid.innerHTML = "";
-  gridPista.innerHTML = "";
+  pista.innerHTML = "";
 
   competidores.forEach((p, i) => {
     const card = document.createElement("div");
@@ -259,97 +241,67 @@ function render() {
       <img src="${p.foto || ''}">
       <div>${p.nombre}</div>
       <div class="dorsal">${p.dorsal || ""}</div>
-      <div class="categoria" style="background:${colorCategoria(p.categoria)}">
-        ${p.categoria || ""}
-      </div>
+      <div class="categoria">${p.categoria || ""}</div>
     `;
     card.onclick = () => abrirFicha(i);
 
     if (p.enPista) {
       const clone = card.cloneNode(true);
       clone.onclick = () => abrirFicha(i);
-      gridPista.appendChild(clone);
+      pista.appendChild(clone);
     }
+
     grid.appendChild(card);
   });
 }
 
 function mostrarFormularioNuevo() {
   editandoIndex = null;
-  document.getElementById("form-title").innerText = "Nuevo Competidor";
   limpiarFormulario();
   document.getElementById("formulario").style.display = "block";
 }
 
-function editarPiloto() {
-  editandoIndex = seleccionado;
-  const p = competidores[seleccionado];
-
-  document.getElementById("form-title").innerText = "Editar Competidor";
-  document.getElementById("n-nombre").value = p.nombre;
-  document.getElementById("n-dorsal").value = p.dorsal;
-  document.getElementById("n-categoria").value = p.categoria;
-  document.getElementById("n-tipo").value = p.tipo;
-  document.getElementById("n-club").value = p.club;
-  document.getElementById("n-embarcacion").value = p.embarcacion;
-
-  document.getElementById("ficha").style.display = "none";
-  document.getElementById("formulario").style.display = "block";
-}
-
 function limpiarFormulario() {
-  document.getElementById("n-nombre").value = "";
-  document.getElementById("n-dorsal").value = "";
-  document.getElementById("n-categoria").value = "";
-  document.getElementById("n-tipo").value = "Motos de agua";
-  document.getElementById("n-club").value = "";
-  document.getElementById("n-embarcacion").value = "";
-  document.getElementById("n-foto").value = "";
-}
-
-function cerrarFormulario() {
-  document.getElementById("formulario").style.display = "none";
+  ["n-nombre","n-dorsal","n-categoria","n-piloto2","n-club","n-embarcacion"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+  document.getElementById("n-tipo").value="Motos de agua";
+  document.getElementById("n-foto").value="";
 }
 
 function guardarFormulario() {
   const file = document.getElementById("n-foto").files[0];
   const reader = new FileReader();
 
-  reader.onload = e => {
-    guardarFinal(e.target.result);
-  };
-
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    guardarFinal(null);
-  }
+  reader.onload = e => guardarFinal(e.target.result);
+  if (file) reader.readAsDataURL(file);
+  else guardarFinal(null);
 }
 
-function guardarFinal(fotoData) {
+function guardarFinal(foto) {
   if (editandoIndex !== null) {
     const p = competidores[editandoIndex];
-    p.nombre = document.getElementById("n-nombre").value;
-    p.dorsal = document.getElementById("n-dorsal").value;
-    p.categoria = document.getElementById("n-categoria").value;
-    p.tipo = document.getElementById("n-tipo").value;
-    p.club = document.getElementById("n-club").value;
-    p.embarcacion = document.getElementById("n-embarcacion").value;
-    if (fotoData) p.foto = fotoData;
+    p.nombre = n("n-nombre");
+    p.dorsal = n("n-dorsal");
+    p.categoria = n("n-categoria");
+    p.piloto2 = n("n-piloto2");
+    p.tipo = n("n-tipo");
+    p.club = n("n-club");
+    p.embarcacion = n("n-embarcacion");
+    if (foto) p.foto = foto;
   } else {
-    const nuevo = {
-      nombre: document.getElementById("n-nombre").value,
-      dorsal: document.getElementById("n-dorsal").value,
-      categoria: document.getElementById("n-categoria").value,
-      tipo: document.getElementById("n-tipo").value,
-      club: document.getElementById("n-club").value,
-      embarcacion: document.getElementById("n-embarcacion").value,
-      familia: [],
+    competidores.push({
+      nombre: n("n-nombre"),
+      dorsal: n("n-dorsal"),
+      categoria: n("n-categoria"),
+      piloto2: n("n-piloto2"),
+      tipo: n("n-tipo"),
+      club: n("n-club"),
+      embarcacion: n("n-embarcacion"),
       resultados: [],
       enPista: false,
-      foto: fotoData || ""
-    };
-    competidores.push(nuevo);
+      foto: foto || ""
+    });
   }
 
   cerrarFormulario();
@@ -360,19 +312,22 @@ function abrirFicha(i) {
   seleccionado = i;
   const p = competidores[i];
 
-  document.getElementById("f-nombre").innerText = p.nombre;
-  document.getElementById("f-dorsal").innerText = "Dorsal: " + p.dorsal;
-  document.getElementById("f-categoria").innerText = "Categoría: " + p.categoria;
-  document.getElementById("f-tipo").innerText = "Tipo: " + p.tipo;
-  document.getElementById("f-club").innerText = "Club: " + p.club;
-  document.getElementById("f-embarcacion").innerText = "Embarcación: " + p.embarcacion;
+  f("f-nombre", p.nombre);
+  f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
+  f("f-dorsal", "Dorsal: " + p.dorsal);
+  f("f-categoria", "Categoría: " + p.categoria);
+  f("f-tipo", "Tipo: " + p.tipo);
+  f("f-club", "Club: " + p.club);
+  f("f-embarcacion", "Embarcación: " + p.embarcacion);
 
-  const res = document.getElementById("f-resultados");
-  res.innerHTML = "";
-  p.resultados.forEach(r => {
-    res.innerHTML += `
-      <div>
-        ${r.anio} | ${r.competicion || ""} | ${r.categoria || ""} | Puesto ${r.puesto}
+  const r = document.getElementById("f-resultados");
+  r.innerHTML = "";
+  p.resultados.forEach(res => {
+    r.innerHTML += `
+      <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
+        🗓️ ${res.anio} | 🏁 ${res.competicion} | 📊 ${res.categoria}<br>
+        🥇 Puesto: ${res.puesto} | 🏆 Título: ${res.titulo || "—"}<br>
+        👥 Piloto 2: ${res.piloto2 || "—"} | ⭐ Puntos: ${res.puntos || "—"}
       </div>
     `;
   });
@@ -380,375 +335,73 @@ function abrirFicha(i) {
   document.getElementById("ficha").style.display = "block";
 }
 
-function cerrarFicha() {
-  document.getElementById("ficha").style.display = "none";
-}
+function guardarResultado() {
+  competidores[seleccionado].resultados.push({
+    anio: n("r-anio"),
+    competicion: n("r-competicion"),
+    categoria: n("r-categoria"),
+    puesto: n("r-puesto"),
+    piloto2: n("r-piloto2"),
+    titulo: n("r-titulo"),
+    tiempo: n("r-tiempo"),
+    puntos: n("r-puntos"),
+    sanciones: n("r-sanciones")
+  });
 
-function toggleEnPista() {
-  const p = competidores[seleccionado];
-  p.enPista = !p.enPista;
+  cerrarResultadoForm();
   render();
   abrirFicha(seleccionado);
 }
 
-function enlazarFamiliar() {
-  const nombre = prompt("Nombre del familiar:");
-  if (!nombre) return;
-  competidores[seleccionado].familia.push(nombre);
+function toggleEnPista() {
+  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
+  render();
+}
+
+function eliminarPiloto() {
+  if (!confirm("¿Eliminar este competidor y todo su historial?")) return;
+  competidores.splice(seleccionado, 1);
+  cerrarFicha();
   render();
 }
 
 function mostrarResultadoForm() {
   document.getElementById("resultadoForm").style.display = "block";
 }
-
 function cerrarResultadoForm() {
   document.getElementById("resultadoForm").style.display = "none";
 }
-
-function guardarResultado() {
-  const p = competidores[seleccionado];
-  p.resultados.push({
-    anio: document.getElementById("r-anio").value,
-    competicion: document.getElementById("r-competicion").value,
-    puesto: document.getElementById("r-puesto").value,
-    tiempo: document.getElementById("r-tiempo").value,
-    puntos: document.getElementById("r-puntos").value,
-    sanciones: document.getElementById("r-sanciones").value,
-    categoria: p.categoria
-  });
-  cerrarResultadoForm();
-  render();
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
 }
 
-function eliminarPiloto() {
-  if (seleccionado === null) return;
-
-  const p = competidores[seleccionado];
-  const confirmar = confirm(
-    "⚠️ Vas a eliminar a:\n\n" +
-    p.nombre +
-    "\n\nSe borrarán TODOS sus datos y resultados.\n\n¿Confirmas?"
-  );
-
-  if (!confirmar) return;
-
-  competidores.splice(seleccionado, 1);
-  seleccionado = null;
-  cerrarFicha();
-  render();
-}
-
-function mostrarRanking() {
-  const categoria = prompt("Categoría (ej: GP2, GT60, SKI DIVISION)");
-  if (!categoria) return;
-
-  let lista = [];
-
-  competidores.forEach(p => {
-    p.resultados.forEach(r => {
-      if (
-        r.categoria &&
-        r.categoria.toLowerCase().includes(categoria.toLowerCase())
-      ) {
-        lista.push({
-          nombre: p.nombre,
-          puntos: r.puesto == 1 ? 100 : r.puesto == 2 ? 70 : r.puesto == 3 ? 50 : 20
-        });
-      }
-    });
-  });
-
-  lista.sort((a, b) => b.puntos - a.puntos);
-
-  alert(
-    "🏆 PALMARÉS HISTÓRICO — " + categoria + "\n\n" +
-    lista.map((p, i) => `${i + 1}. ${p.nombre} — ${p.puntos} pts`).join("\n")
-  );
-}
-
-function pantallaPublico() {
-  const win = window.open("", "publico");
-  win.document.write(`
-    <html>
-    <body style="background:black;color:white;font-family:sans-serif;padding:20px">
-      <h1>PALMARÉS HISTÓRICO</h1>
-      <div id="lista"></div>
-      <script>
-        function actualizar() {
-          const datos = JSON.parse(localStorage.getItem("rfemData") || "[]");
-          let lista = [];
-          datos.forEach(p => {
-            const total = p.resultados.reduce((s, r) => {
-              if (r.puesto == 1) return s + 100;
-              if (r.puesto == 2) return s + 70;
-              if (r.puesto == 3) return s + 50;
-              return s + 20;
-            }, 0);
-            lista.push({nombre:p.nombre, puntos:total});
-          });
-          lista.sort((a,b)=>b.puntos-a.puntos);
-
-          const div = document.getElementById("lista");
-          div.innerHTML="";
-          lista.slice(0,10).forEach((p,i)=>{
-            div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.nombre} — 🏆 \${p.puntos}</div>\`;
-          });
-        }
-        setInterval(actualizar,2000);
-        actualizar();
-      <\/script>
-    </body>
-    </html>
-  `);
-}
-
-/* ===== IMPORTADOR PDF RESULTADOS BÁSICOS ===== */
-document.getElementById("pdfInput").addEventListener("change", function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function() {
-    const typedarray = new Uint8Array(this.result);
-
-    pdfjsLib.getDocument(typedarray).promise.then(async pdf => {
-      let textoCompleto = "";
-
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const strings = content.items.map(item => item.str);
-        textoCompleto += strings.join(" ") + "\n";
-      }
-
-      procesarTextoRFEM(textoCompleto);
-    });
-  };
-  reader.readAsArrayBuffer(file);
-});
-
-function importarPDF() {
-  document.getElementById("pdfInput").click();
-}
-
-function procesarTextoRFEM(texto) {
-  alert("📄 Resultados cargados\n\nProcesando...");
-
-  const lineas = texto.split("\n");
-
-  lineas.forEach(l => {
-    const linea = l.trim();
-    if (!/^\d+/.test(linea)) return;
-
-    const limpia = linea.replace(/\s+/g, " ");
-    const partes = limpia.split(" ");
-    if (partes.length < 3) return;
-
-    const puesto = partes[0];
-    const puntos = partes[partes.length - 1];
-    if (isNaN(puntos)) return;
-
-    let nombrePartes = partes.slice(1, partes.length - 1);
-    nombrePartes = nombrePartes.filter(p => p.length > 3);
-    const nombre = nombrePartes.join(" ").replace(",", "").trim();
-    if (!nombre) return;
-
-    let piloto = competidores.find(
-      p => p.nombre.toLowerCase() === nombre.toLowerCase()
-    );
-
-    if (!piloto) {
-      piloto = {
-        nombre: nombre,
-        dorsal: "",
-        categoria: "",
-        tipo: "",
-        club: "",
-        embarcacion: "",
-        familia: [],
-        resultados: [],
-        enPista: false,
-        foto: ""
-      };
-      competidores.push(piloto);
-    }
-
-    piloto.resultados.push({
-      anio: new Date().getFullYear(),
-      competicion: "RFEM Resultados",
-      puesto: puesto,
-      tiempo: "",
-      puntos: puntos,
-      sanciones: "",
-      categoria: piloto.categoria
-    });
-  });
-
-  render();
-  alert("✅ Resultados importados. Revisa los pilotos.");
-}
-
-/* ===== IMPORTADOR MEMORIA RFEM PALMARÉS ===== */
-function importarMemoria() {
-  document.getElementById("pdfInput").onchange = function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function() {
-      const typedarray = new Uint8Array(this.result);
-
-      pdfjsLib.getDocument(typedarray).promise.then(async pdf => {
-        let textoCompleto = "";
-
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const content = await page.getTextContent();
-          const strings = content.items.map(item => item.str);
-          textoCompleto += strings.join(" ") + "\n";
-        }
-
-        procesarMemoriaRFEM(textoCompleto);
-      });
-    };
-    reader.readAsArrayBuffer(file);
-  };
-
-  document.getElementById("pdfInput").click();
-}
-
-function procesarMemoriaRFEM(texto) {
-  alert("🏆 Memoria RFEM cargada\n\nAnalizando palmarés histórico...");
-
-  let anio = "????";
-  const matchAnio = texto.match(/20\d{2}|19\d{2}/);
-  if (matchAnio) anio = matchAnio[0];
-
-  const lineas = texto.split("\n");
-  let competicionActual = "";
-  let categoriaActual = "";
-  let creados = 0;
-
-  lineas.forEach(l => {
-    const linea = l.trim();
-    if (!linea) return;
-
-    const upper = linea.toUpperCase();
-
-    if (
-      upper.includes("CAMPEONATO") ||
-      upper.includes("COPA") ||
-      upper.includes("TROFEO")
-    ) {
-      competicionActual = linea;
-      return;
-    }
-
-    if (
-      upper.includes("SKI") ||
-      upper.includes("DIVISION") ||
-      upper.includes("GP") ||
-      upper.includes("GT") ||
-      upper.includes("FORMULA")
-    ) {
-      categoriaActual = linea;
-      return;
-    }
-
-    let puesto = null;
-    let nombre = null;
-
-    let m = linea.match(/^(\d+)[º°]\s+(.+)/);
-    if (m) {
-      puesto = m[1];
-      nombre = m[2];
-    }
-
-    if (upper.startsWith("CAMPEÓN")) {
-      puesto = "1";
-      nombre = linea.split(":")[1];
-    }
-    if (upper.startsWith("SUBCAMPEÓN")) {
-      puesto = "2";
-      nombre = linea.split(":")[1];
-    }
-    if (upper.startsWith("TERCERO")) {
-      puesto = "3";
-      nombre = linea.split(":")[1];
-    }
-
-    if (!puesto || !nombre) return;
-
-    nombre = nombre.trim();
-    if (!nombre) return;
-
-    let piloto = competidores.find(
-      p => p.nombre.toLowerCase() === nombre.toLowerCase()
-    );
-
-    if (!piloto) {
-      piloto = {
-        nombre: nombre,
-        dorsal: "",
-        categoria: categoriaActual,
-        tipo: "",
-        club: "",
-        embarcacion: "",
-        familia: [],
-        resultados: [],
-        enPista: false,
-        foto: ""
-      };
-      competidores.push(piloto);
-      creados++;
-    }
-
-    piloto.resultados.push({
-      anio: anio,
-      competicion: competicionActual,
-      puesto: puesto,
-      tiempo: "",
-      puntos: "",
-      sanciones: "",
-      categoria: categoriaActual
-    });
-  });
-
-  render();
-  alert(
-    "✅ Palmarés importado\n\nAño: " + anio +
-    "\nPilotos creados: " + creados +
-    "\n\nYa puedes consultar rankings históricos por categoría."
-  );
-}
+function n(id) { return document.getElementById(id).value; }
+function f(id, txt) { document.getElementById(id).innerText = txt; }
 
 function exportarBackup() {
-  const data = JSON.stringify(competidores, null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
+  const blob = new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
   const a = document.createElement("a");
-  a.href = url;
+  a.href = URL.createObjectURL(blob);
   a.download = "rfem_backup.json";
   a.click();
 }
 
 function importarBackup() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "application/json";
-
-  input.onchange = e => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      competidores = JSON.parse(reader.result);
+  const i = document.createElement("input");
+  i.type="file";
+  i.accept="application/json";
+  i.onchange=e=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      competidores=JSON.parse(r.result);
       render();
     };
-    reader.readAsText(e.target.files[0]);
+    r.readAsText(e.target.files[0]);
   };
-
-  input.click();
+  i.click();
 }
 
 render();

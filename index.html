@@ -6,52 +6,66 @@
 <title>RFEM Speaker PRO</title>
 
 <style>
+/* ===== FUENTE MODERNA ===== */
+@font-face {
+  font-family: "InterVar";
+  src: local("Inter"), local("Inter-Regular");
+}
+
 * {
   box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "InterVar", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #05070f;
-  color: white;
 }
 
-/* ===== APP LAYOUT ===== */
-#app {
+/* ===== FONDO DEGRADÉ ===== */
+body {
+  background: linear-gradient(135deg, #0a2540, #0f766e, #1e3a8a);
+  color: #ffffff;
+}
+
+/* ===== HEADER ===== */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   padding: 20px;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  letter-spacing: 2px;
+#header img {
+  height: 60px;
 }
 
-.section-title {
-  margin: 30px 0 10px;
-  font-size: 1.5rem;
+#title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 3px;
 }
 
-/* ===== BOTONES ===== */
+/* ===== TOOLBAR ===== */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 25px;
+  gap: 14px;
+  margin-bottom: 30px;
 }
 
 button {
-  background: #00cfff;
+  background: #22d3ee;
   border: none;
-  border-radius: 14px;
-  padding: 14px 20px;
+  border-radius: 16px;
+  padding: 16px 24px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 800;
   cursor: pointer;
+  color: #000;
 }
 
 button:hover {
@@ -59,21 +73,32 @@ button:hover {
 }
 
 .danger {
-  background: #ff3b3b;
+  background: #ef4444;
+  color: #fff;
+}
+
+/* ===== SECCIONES ===== */
+.section-title {
+  margin: 30px 0 12px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: center;
 }
 
 /* ===== GRID ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  padding: 0 20px;
 }
 
 /* ===== CARD ===== */
 .card {
-  background: #0e1324;
-  border-radius: 20px;
-  padding: 12px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  border-radius: 24px;
+  padding: 14px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
@@ -81,37 +106,37 @@ button:hover {
 
 .card:hover {
   transform: scale(1.04);
-  box-shadow: 0 0 20px #00cfff55;
+  box-shadow: 0 0 25px rgba(34,211,238,0.7);
 }
 
 .card img {
   width: 100%;
-  height: 140px;
+  height: 150px;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: 18px;
 }
 
 .dorsal {
-  font-size: 32px;
-  font-weight: bold;
-  margin: 6px 0;
+  font-size: 34px;
+  font-weight: 900;
+  margin: 8px 0;
 }
 
 /* ===== STATUS ===== */
 .en-pista {
-  outline: 4px solid #00ff7f;
-  box-shadow: 0 0 20px #00ff7f;
+  outline: 4px solid #22c55e;
+  box-shadow: 0 0 25px #22c55e;
 }
 
 .en-parrilla {
-  outline: 4px solid #ffd000;
+  outline: 4px solid #facc15;
 }
 
 /* ===== MODAL ===== */
 #modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.75);
   display: none;
   justify-content: center;
   align-items: center;
@@ -119,81 +144,82 @@ button:hover {
 }
 
 .modal-box {
-  background: #0b1020;
-  border-radius: 24px;
-  padding: 20px;
+  background: #020617;
+  border-radius: 28px;
+  padding: 24px;
   width: 90%;
   max-width: 650px;
   max-height: 90vh;
   overflow-y: auto;
+  color: white;
 }
 
 input, select, textarea {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin: 8px 0 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: none;
   font-size: 16px;
 }
 
+/* ===== BADGES ===== */
 .badge {
   display: inline-block;
-  background: #00cfff;
+  background: #22d3ee;
   color: #000;
-  padding: 6px 12px;
+  padding: 8px 14px;
   margin: 4px;
-  border-radius: 12px;
-  font-weight: bold;
+  border-radius: 14px;
+  font-weight: 800;
 }
 
 /* ===== SPEAKER MODE ===== */
 #speaker {
   position: fixed;
   inset: 0;
-  background: black;
+  background: linear-gradient(135deg, #020617, #020617);
   color: white;
   display: none;
   z-index: 1000;
-  padding: 40px;
+  padding: 60px;
 }
 
 #speaker h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
+  font-size: 52px;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
 }
 
 #speaker p {
-  font-size: 28px;
-  line-height: 1.4;
+  font-size: 30px;
+  line-height: 1.6;
 }
 
 #speaker button {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: red;
+  background: #ef4444;
+  color: white;
 }
 
-/* ===== FOOTER ===== */
-footer {
-  margin-top: 40px;
-  text-align: center;
-}
-
-footer img {
-  height: 50px;
-  margin: 0 15px;
-  opacity: 0.9;
+/* ===== FOOTER SPACE ===== */
+.footer-space {
+  height: 40px;
 }
 </style>
 </head>
 <body>
 
-<div id="app">
+<!-- HEADER -->
+<div id="header">
+  <img src="rfem.png" alt="RFEM">
+  <div id="title">RFEM SPEAKER PRO</div>
+  <img src="gaston.png" alt="Gaston Iglesias">
+</div>
 
-<h1>🎙️ RFEM SPEAKER PRO</h1>
-
+<!-- TOOLBAR -->
 <div class="toolbar">
   <button onclick="nuevoPiloto()">➕ Nuevo Piloto</button>
   <button onclick="modoSpeaker()">🎙️ Modo Speaker</button>
@@ -210,14 +236,7 @@ footer img {
 <h2 class="section-title">👥 Todos los pilotos</h2>
 <div class="grid" id="grid"></div>
 
-<footer>
-  <img src="rfem.png">
-  <img src="andaluza.png">
-  <img src="uim.png">
-  <img src="gaston.png">
-</footer>
-
-</div>
+<div class="footer-space"></div>
 
 <!-- MODAL -->
 <div id="modal">
@@ -267,7 +286,7 @@ function render() {
       (p.enParrilla ? " en-parrilla" : "");
 
     card.innerHTML = `
-      <img src="${p.foto || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwY2ZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UElMT1RPPC90ZXh0Pjwvc3ZnPg=="}">
+      <img src="${p.foto || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzIyZDNlZSIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UElMT1RPPC90ZXh0Pjwvc3ZnPg=="}">
       <div><b>${p.nombre}</b></div>
       <div class="dorsal">${p.dorsal || ""}</div>
       <div>${p.categoria || ""}</div>

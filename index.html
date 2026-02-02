@@ -1,89 +1,61 @@
 <!DOCTYPE html>
-`;
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>RFEM Speaker PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-document.getElementById("s-nombre").innerText = p.nombre.toUpperCase();
-document.getElementById("s-texto").innerText = texto;
-
-
-document.getElementById("ficha").style.display = "none";
-document.getElementById("speaker").style.display = "block";
+<style>
+body {
+margin: 0;
+font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+background:
+linear-gradient(rgba(5,10,25,0.85), rgba(5,10,25,0.85)),
+url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80");
+background-size: cover;
+background-attachment: fixed;
+color: white;
 }
 
 
-function cerrarSpeaker() {
-document.getElementById("speaker").style.display = "none";
+header {
+padding: 20px;
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+justify-content: center;
+background: rgba(5,10,25,0.7);
+backdrop-filter: blur(8px);
 }
 
 
-function cargarDemo() {
-if (!confirm("Esto cargará pilotos y palmarés históricos. ¿Continuar?")) return;
-
-
-const datos = [
-["2005","Internacional","Motos de Agua - Circuito","Ski Division","11","Jose Ignacio Armillas Barquero"],
-["2005","Internacional","Motos de Agua - Circuito","Runabout Stock","1","Jose Ignacio Armillas Barquero"],
-["2018","Internacional","Motos de Agua - Circuito","Ski GP2","1","Ignasi Armillas Guardiola"],
-["2019","Internacional","Motos de Agua - Circuito","Runabout GP4","1","Alejandro Prats Palau"]
-];
-
-
-datos.forEach(d=>{
-let pilotos=d[5];
-let p1=pilotos, p2="";
-if(pilotos.includes("/")){
-const parts=pilotos.split("/");
-p1=parts[0].trim();
-p2=parts[1].trim();
+button {
+background: #00d1ff;
+border: none;
+padding: 14px 18px;
+font-size: 16px;
+font-weight: bold;
+border-radius: 14px;
+cursor: pointer;
+transition: transform 0.2s, background 0.2s;
+}
+button:hover {
+background: #00b4dd;
+transform: scale(1.05);
 }
 
 
-let piloto=competidores.find(x=>x.nombre.toLowerCase()===p1.toLowerCase());
-if(!piloto){
-piloto={
-nombre:p1,
-piloto2:p2,
-dorsal:"",
-categoria:d[3],
-tipo:d[2].includes("Embarcaciones")?"Barcos":"Motos de agua",
-club:"",
-embarcacion:"",
-resultados:[],
-enPista:false,
-enParrilla:false,
-foto:""
-};
-competidores.push(piloto);
+.section-title {
+text-align: center;
+font-size: 28px;
+margin: 20px;
 }
 
 
-const puesto=d[4];
-piloto.resultados.push({
-anio:d[0],
-competicion:d[1]+" - "+d[2],
-categoria:d[3],
-puesto:puesto,
-piloto2:p2,
-titulo: puesto=="1"?"Campeón":puesto=="2"?"Subcampeón":puesto=="3"?"Tercero":"",
-puntos:"",
-sanciones:""
-});
-});
-
-
-render();
-alert("🏆 Palmarés histórico cargado correctamente");
-}
-
-
-function n(id){return document.getElementById(id).value;}
-function v(id,val){document.getElementById(id).value=val;}
-function f(id,txt){document.getElementById(id).innerText=txt;}
-
-
-render();
-</script>
-
-
-</body>
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+gap: 16px;
+padding: 20px;
 </html>

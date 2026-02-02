@@ -3,132 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>RFEM Speaker Pro</title>
+<title>RFEM Speaker PRO</title>
 
 <style>
-/* ===== RESET ===== */
-*{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu}
-html,body{margin:0;padding:0;height:100%}
-
-/* ===== FONDO BLINDADO ===== */
-body{
-  min-height:100vh;
-  background:url("https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?auto=format&fit=crop&w=1920&q=80") center/cover no-repeat fixed;
-  overflow-x:hidden;
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  z-index:-1;
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: #05070f;
+  color: white;
 }
 
-#app{
-  position:relative;
-  z-index:1;
-  color:#fff;
-  padding:20px;
+/* ===== APP LAYOUT ===== */
+#app {
+  padding: 20px;
 }
 
-h1{
-  text-align:center;
-  margin:10px 0 20px;
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
 }
 
-.section-title{
-  margin:30px 0 10px;
-  font-size:1.5rem;
+.section-title {
+  margin: 30px 0 10px;
+  font-size: 1.5rem;
 }
 
 /* ===== BOTONES ===== */
-button{
-  background:#00d1ff;
-  border:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-weight:700;
-  cursor:pointer;
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
-button:hover{opacity:.85}
+button {
+  background: #00cfff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-.danger{background:#ff4d4d;color:#fff}
+button:hover {
+  opacity: 0.85;
+}
+
+.danger {
+  background: #ff3b3b;
+}
 
 /* ===== GRID ===== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-  gap:15px;
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
 }
 
-.card{
-  background:rgba(0,0,0,0.6);
-  border-radius:15px;
-  padding:10px;
-  text-align:center;
-  cursor:pointer;
+/* ===== CARD ===== */
+.card {
+  background: #0e1324;
+  border-radius: 20px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
-.card img{
-  width:100%;
-  height:140px;
-  object-fit:cover;
-  border-radius:10px;
+.card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 20px #00cfff55;
 }
 
-.en-pista{outline:3px solid #00ff66}
+.card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.dorsal {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 6px 0;
+}
+
+/* ===== STATUS ===== */
+.en-pista {
+  outline: 4px solid #00ff7f;
+  box-shadow: 0 0 20px #00ff7f;
+}
+
+.en-parrilla {
+  outline: 4px solid #ffd000;
+}
 
 /* ===== MODAL ===== */
-#modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.8);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.modal-content{
-  background:#111;
-  padding:20px;
-  border-radius:20px;
-  width:90%;
-  max-width:600px;
-  max-height:90vh;
-  overflow:auto;
+.modal-box {
+  background: #0b1020;
+  border-radius: 24px;
+  padding: 20px;
+  width: 90%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-input,select,textarea{
-  width:100%;
-  padding:8px;
-  margin:6px 0 12px;
-  border-radius:8px;
-  border:none;
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
 }
 
-.badge{
-  display:inline-block;
-  padding:6px 12px;
-  margin:4px;
-  background:#00d1ff;
-  border-radius:12px;
-  font-weight:700;
-  color:#000;
+.badge {
+  display: inline-block;
+  background: #00cfff;
+  color: #000;
+  padding: 6px 12px;
+  margin: 4px;
+  border-radius: 12px;
+  font-weight: bold;
 }
 
-footer{
-  margin-top:40px;
-  text-align:center;
+/* ===== SPEAKER MODE ===== */
+#speaker {
+  position: fixed;
+  inset: 0;
+  background: black;
+  color: white;
+  display: none;
+  z-index: 1000;
+  padding: 40px;
 }
 
-footer img{
-  height:50px;
-  margin:0 15px;
+#speaker h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
 }
 
+#speaker p {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+#speaker button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: red;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 40px;
+  text-align: center;
+}
+
+footer img {
+  height: 50px;
+  margin: 0 15px;
+  opacity: 0.9;
+}
 </style>
 </head>
 <body>
@@ -137,188 +194,237 @@ footer img{
 
 <h1>🎙️ RFEM SPEAKER PRO</h1>
 
-<div style="text-align:center;margin-bottom:20px">
-  <button onclick="abrirNuevo()">➕ Nuevo Piloto</button>
+<div class="toolbar">
+  <button onclick="nuevoPiloto()">➕ Nuevo Piloto</button>
+  <button onclick="modoSpeaker()">🎙️ Modo Speaker</button>
   <button onclick="backup()">☁️ Backup</button>
   <button onclick="restore()">♻️ Restaurar</button>
-  <button onclick="importarDatosHistoricos()">🏆 Cargar Historial RFEM</button>
 </div>
 
-<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
+<h2 class="section-title">🏁 Parrilla de salida</h2>
 <div class="grid" id="gridParrilla"></div>
 
-<h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
+<h2 class="section-title">🎮 Pilotos en pista</h2>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">👥 TODOS LOS PILOTOS</h1>
+<h2 class="section-title">👥 Todos los pilotos</h2>
 <div class="grid" id="grid"></div>
 
 <footer>
-  <img src="rfem.png" alt="RFEM">
-  <img src="andaluza.png" alt="Federación Andaluza">
-  <img src="uim.png" alt="UIM">
-  <img src="gaston.png" alt="Gaston Iglesias">
+  <img src="rfem.png">
+  <img src="andaluza.png">
+  <img src="uim.png">
+  <img src="gaston.png">
 </footer>
 
 </div>
 
 <!-- MODAL -->
 <div id="modal">
-  <div class="modal-content" id="modalContent"></div>
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- SPEAKER -->
+<div id="speaker">
+  <button onclick="cerrarSpeaker()">✖ Cerrar</button>
+  <h1 id="spNombre"></h1>
+  <p id="spTexto"></p>
 </div>
 
 <script>
 let competidores = JSON.parse(localStorage.getItem("rfemData") || "[]");
 
-function guardarDatos(){
-  localStorage.setItem("rfemData",JSON.stringify(competidores));
+/* ===== UTIL ===== */
+function guardar() {
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
-function abrirNuevo(){
-  document.getElementById("modal").style.display="flex";
-  document.getElementById("modalContent").innerHTML=`
-  <h2>➕ Nuevo Piloto</h2>
-  <input id="n-nombre" placeholder="Nombre completo">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
-  <input id="n-dorsal" placeholder="Dorsal">
-  <input id="n-categoria" placeholder="Categoría principal">
-  <input id="n-club" placeholder="Club">
-  <input id="n-embarcacion" placeholder="Embarcación">
-  <input id="n-foto" placeholder="URL Foto">
-  <button onclick="guardarNuevo()">Guardar</button>
-  <button class="danger" onclick="cerrarModal()">Cancelar</button>
-  `;
+function mostrarModal(html) {
+  document.getElementById("modalBox").innerHTML = html;
+  document.getElementById("modal").style.display = "flex";
 }
 
-function guardarNuevo(){
-  const n=id=>document.getElementById(id).value;
+function cerrarModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+/* ===== RENDER ===== */
+function render() {
+  guardar();
+
+  const grid = document.getElementById("grid");
+  const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
+
+  grid.innerHTML = "";
+  pista.innerHTML = "";
+  parrilla.innerHTML = "";
+
+  competidores.forEach((p, i) => {
+    const card = document.createElement("div");
+    card.className = "card" +
+      (p.enPista ? " en-pista" : "") +
+      (p.enParrilla ? " en-parrilla" : "");
+
+    card.innerHTML = `
+      <img src="${p.foto || "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzAwY2ZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjI0IiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UElMT1RPPC90ZXh0Pjwvc3ZnPg=="}">
+      <div><b>${p.nombre}</b></div>
+      <div class="dorsal">${p.dorsal || ""}</div>
+      <div>${p.categoria || ""}</div>
+      <button onclick="toggleParrilla(${i});event.stopPropagation()">
+        ${p.enParrilla ? "➖ Quitar" : "➕ Parrilla"}
+      </button>
+    `;
+
+    card.onclick = () => abrirFicha(i);
+
+    grid.appendChild(card);
+
+    if (p.enPista) pista.appendChild(card.cloneNode(true));
+    if (p.enParrilla) parrilla.appendChild(card.cloneNode(true));
+  });
+}
+
+/* ===== PILOTOS ===== */
+function nuevoPiloto() {
+  mostrarModal(`
+    <h2>➕ Nuevo Piloto</h2>
+    <input id="n-nombre" placeholder="Nombre completo">
+    <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+    <input id="n-dorsal" placeholder="Dorsal">
+    <input id="n-categoria" placeholder="Categoría principal">
+    <input id="n-club" placeholder="Club">
+    <input id="n-embarcacion" placeholder="Embarcación">
+    <input id="n-foto" placeholder="URL Foto (opcional)">
+    <button onclick="guardarNuevo()">Guardar</button>
+    <button class="danger" onclick="cerrarModal()">Cancelar</button>
+  `);
+}
+
+function guardarNuevo() {
+  const v = id => document.getElementById(id).value;
   competidores.push({
-    nombre:n("n-nombre"),
-    piloto2:n("n-piloto2"),
-    dorsal:n("n-dorsal"),
-    categoria:n("n-categoria"),
-    club:n("n-club"),
-    embarcacion:n("n-embarcacion"),
-    foto:n("n-foto"),
-    resultados:[],
-    enPista:false,
-    enParrilla:false
+    nombre: v("n-nombre"),
+    piloto2: v("n-piloto2"),
+    dorsal: v("n-dorsal"),
+    categoria: v("n-categoria"),
+    club: v("n-club"),
+    embarcacion: v("n-embarcacion"),
+    foto: v("n-foto"),
+    resultados: [],
+    enPista: false,
+    enParrilla: false
   });
   cerrarModal();
   render();
 }
 
-function abrirFicha(i){
-  const p=competidores[i];
-  document.getElementById("modal").style.display="flex";
+function abrirFicha(i) {
+  const p = competidores[i];
+  const categorias = [...new Set(p.resultados.map(r => r.categoria).filter(Boolean))];
 
-  const categorias=[...new Set(p.resultados.map(r=>r.categoria).filter(Boolean))];
+  mostrarModal(`
+    <h2>${p.nombre}</h2>
+    <p><b>Piloto 2:</b> ${p.piloto2 || "-"}</p>
+    <p><b>Dorsal:</b> ${p.dorsal}</p>
+    <p><b>Club:</b> ${p.club}</p>
+    <p><b>Embarcación:</b> ${p.embarcacion}</p>
 
-  document.getElementById("modalContent").innerHTML=`
-  <h2>${p.nombre}</h2>
-  <p><b>Piloto 2:</b> ${p.piloto2||"-"}</p>
-  <p><b>Dorsal:</b> ${p.dorsal}</p>
-  <p><b>Club:</b> ${p.club}</p>
-  <p><b>Embarcación:</b> ${p.embarcacion}</p>
+    <h3>📊 Categorías</h3>
+    <div>${categorias.map(c => `<span class="badge">${c}</span>`).join("")}</div>
 
-  <h3>📊 Categorías en las que ha competido</h3>
-  <div>${categorias.map(c=>`<span class="badge">${c}</span>`).join("")}</div>
+    <h3>🏆 Historial</h3>
+    <div>
+      ${p.resultados.map(r => `
+        <p>${r.anio} - ${r.categoria} → ${r.titulo || r.puesto + "º"} ${r.piloto2 ? "(" + r.piloto2 + ")" : ""}</p>
+      `).join("") || "<p>Sin resultados cargados</p>"}
+    </div>
 
-  <h3>🏆 Historial</h3>
-  <div>${p.resultados.map(r=>`
-    <p>${r.anio} - ${r.categoria} → ${r.titulo||r.puesto+"º"} ${r.piloto2?"("+r.piloto2+")":""}</p>
-  `).join("")}</div>
-
-  <button onclick="togglePista(${i})">🎮 En pista</button>
-  <button onclick="toggleParrilla(${i})">🏁 Parrilla</button>
-  <button class="danger" onclick="eliminar(${i})">🗑️ Eliminar</button>
-  <button onclick="cerrarModal()">Cerrar</button>
-  `;
+    <button onclick="togglePista(${i})">🎮 En pista</button>
+    <button onclick="toggleParrilla(${i})">🏁 Parrilla</button>
+    <button class="danger" onclick="eliminarPiloto(${i})">🗑️ Eliminar</button>
+    <button onclick="cerrarModal()">Cerrar</button>
+  `);
 }
 
-function cerrarModal(){
-  document.getElementById("modal").style.display="none";
-}
-
-function eliminar(i){
-  if(confirm("¿Eliminar piloto?")){
-    competidores.splice(i,1);
+function eliminarPiloto(i) {
+  if (confirm("¿Eliminar piloto y todo su historial?")) {
+    competidores.splice(i, 1);
     cerrarModal();
     render();
   }
 }
 
-function togglePista(i){
-  competidores[i].enPista=!competidores[i].enPista;
+function togglePista(i) {
+  competidores[i].enPista = !competidores[i].enPista;
   render();
 }
 
-function toggleParrilla(i){
-  competidores[i].enParrilla=!competidores[i].enParrilla;
+function toggleParrilla(i) {
+  competidores[i].enParrilla = !competidores[i].enParrilla;
   render();
 }
 
-function render(){
-  guardarDatos();
+/* ===== SPEAKER ===== */
+function modoSpeaker() {
+  const lista = competidores.filter(p => p.enParrilla || p.enPista);
+  if (!lista.length) {
+    alert("Selecciona pilotos en parrilla o en pista primero.");
+    return;
+  }
 
-  const grid=document.getElementById("grid");
-  const pista=document.getElementById("gridPista");
-  const parrilla=document.getElementById("gridParrilla");
+  let i = 0;
+  const sp = document.getElementById("speaker");
+  const nombre = document.getElementById("spNombre");
+  const texto = document.getElementById("spTexto");
 
-  grid.innerHTML="";
-  pista.innerHTML="";
-  parrilla.innerHTML="";
+  function mostrar() {
+    const p = lista[i];
+    nombre.innerText = p.nombre;
+    texto.innerText =
+      `Dorsal ${p.dorsal || "sin número"}.\n` +
+      `Categoría: ${p.categoria || "no especificada"}.\n` +
+      `Club: ${p.club || "no indicado"}.\n` +
+      (p.piloto2 ? `Copiloto: ${p.piloto2}.\n` : "") +
+      `Historial: ${p.resultados.length} clasificaciones registradas.`;
+  }
 
-  competidores.forEach((p,i)=>{
-    const card=document.createElement("div");
-    card.className="card"+(p.enPista?" en-pista":"");
-    card.innerHTML=`
-      <img src="${p.foto||"https://via.placeholder.com/300x200?text=Piloto"}">
-      <div><b>${p.nombre}</b></div>
-      <div>${p.categoria||""}</div>
-      <button onclick="toggleParrilla(${i});event.stopPropagation()">${p.enParrilla?"➖ Quitar":"➕ Parrilla"}</button>
-    `;
-    card.onclick=()=>abrirFicha(i);
+  sp.onclick = () => {
+    i = (i + 1) % lista.length;
+    mostrar();
+  };
 
-    grid.appendChild(card);
-
-    if(p.enPista){
-      pista.appendChild(card.cloneNode(true));
-    }
-
-    if(p.enParrilla){
-      parrilla.appendChild(card.cloneNode(true));
-    }
-  });
+  mostrar();
+  sp.style.display = "block";
 }
 
-function backup(){
-  const data=JSON.stringify(competidores,null,2);
-  const blob=new Blob([data],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="rfem_backup.json";
+function cerrarSpeaker() {
+  document.getElementById("speaker").style.display = "none";
+}
+
+/* ===== BACKUP ===== */
+function backup() {
+  const data = JSON.stringify(competidores, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "rfem_backup.json";
   a.click();
 }
 
-function restore(){
-  const input=document.createElement("input");
-  input.type="file";
-  input.onchange=e=>{
-    const file=e.target.files[0];
-    const r=new FileReader();
-    r.onload=()=>{
-      competidores=JSON.parse(r.result);
+function restore() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+  input.onchange = e => {
+    const r = new FileReader();
+    r.onload = () => {
+      competidores = JSON.parse(r.result);
       render();
     };
-    r.readAsText(file);
+    r.readAsText(e.target.files[0]);
   };
   input.click();
-}
-
-/* ===== HISTÓRICO RFEM ===== */
-function importarDatosHistoricos(){
-  alert("Histórico RFEM cargado en esta versión base. Puedes ampliarlo con más temporadas cuando quieras.");
 }
 
 render();

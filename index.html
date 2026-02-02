@@ -18,7 +18,6 @@ body {
   background-attachment: fixed;
   color: white;
 }
-
 header {
   padding: 20px;
   display: flex;
@@ -28,7 +27,6 @@ header {
   background: rgba(5,10,25,0.7);
   backdrop-filter: blur(8px);
 }
-
 button {
   background: #00d1ff;
   border: none;
@@ -37,75 +35,48 @@ button {
   font-weight: bold;
   border-radius: 14px;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
 }
-
-button:hover {
-  transform: scale(1.05);
-  background: #00b4dd;
-}
-
-.section-title {
-  text-align: center;
-  font-size: 28px;
-  margin: 20px;
-}
-
+button:hover { background: #00b4dd; transform: scale(1.05); }
+.section-title { text-align:center; font-size:28px; margin:20px; }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
   gap: 16px;
   padding: 20px;
 }
-
 .card {
   background: rgba(20,30,60,0.9);
   border-radius: 20px;
   padding: 14px;
   text-align: center;
-  transition: transform 0.2s;
 }
-
-.card:hover {
-  transform: scale(1.05);
-}
-
+.card:hover { transform: scale(1.05); }
 .en-pista {
   border: 4px solid #00ff00;
   box-shadow: 0 0 25px #00ff00;
 }
-
 .card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
   border-radius: 14px;
 }
-
-.dorsal {
-  font-size: 36px;
-  font-weight: bold;
-}
-
+.dorsal { font-size: 36px; font-weight: bold; }
 .categoria {
   padding: 6px 12px;
   border-radius: 10px;
   display: inline-block;
   font-size: 14px;
 }
-
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(5,10,25,0.95);
   display: none;
   padding: 20px;
   overflow-y: auto;
 }
-
 input, select {
   width: 100%;
   padding: 12px;
@@ -114,7 +85,6 @@ input, select {
   border: none;
   font-size: 16px;
 }
-
 .footer {
   display: flex;
   justify-content: center;
@@ -123,11 +93,7 @@ input, select {
   padding: 20px;
   background: rgba(0,0,0,0.6);
 }
-
-.footer img {
-  height: 60px;
-  opacity: 0.85;
-}
+.footer img { height: 60px; opacity: 0.85; }
 </style>
 </head>
 
@@ -135,10 +101,9 @@ input, select {
 
 <header>
   <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
-  <button onclick="importarPDF()">📄 Importar RFEM</button>
-  <button onclick="importarMemoria()">🏆 Importar Palmarés</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="pantallaPublico()">📺 Pantalla Público</button>
+  <button onclick="cargarDemo()">🏆 Cargar Palmarés Histórico (Demo)</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
   <button onclick="importarBackup()">☁️ Restaurar</button>
 </header>
@@ -149,15 +114,15 @@ input, select {
 <h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
 <div class="grid" id="grid"></div>
 
-<!-- FORMULARIO PILOTO -->
+<!-- FORMULARIO -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver</button>
-  <h2 id="form-title">Competidor</h2>
+  <h2>Competidor</h2>
 
-  <input id="n-nombre" placeholder="Nombre Piloto 1">
+  <input id="n-nombre" placeholder="Piloto 1 (Nombre completo)">
+  <input id="n-piloto2" placeholder="Piloto 2 (Opcional)">
   <input id="n-dorsal" placeholder="Dorsal">
   <input id="n-categoria" placeholder="Categoría principal">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
   <select id="n-tipo">
     <option>Motos de agua</option>
     <option>Barcos</option>
@@ -185,7 +150,7 @@ input, select {
 
   <button onclick="toggleEnPista()">🎮 En pista</button>
 
-  <h3>🏆 Títulos y Clasificaciones Anuales</h3>
+  <h3>🏆 Historial de Clasificaciones</h3>
   <div id="f-resultados"></div>
   <button onclick="mostrarResultadoForm()">➕ Añadir Clasificación</button>
 </div>
@@ -198,17 +163,14 @@ input, select {
   <input id="r-anio" placeholder="Año">
   <input id="r-competicion" placeholder="Campeonato / Competición">
   <input id="r-categoria" placeholder="Categoría">
-  <input id="r-puesto" placeholder="Puesto final (1,2,3,4...)">
-  <input id="r-piloto2" placeholder="Piloto 2 (si aplica)">
-  <input id="r-titulo" placeholder="Título obtenido (Campeón, Subcampeón, etc)">
-  <input id="r-tiempo" placeholder="Mejor tiempo">
-  <input id="r-puntos" placeholder="Puntos totales">
+  <input id="r-puesto" placeholder="Puesto final (1,2,3...)">
+  <input id="r-piloto2" placeholder="Piloto 2">
+  <input id="r-titulo" placeholder="Título (Campeón, Subcampeón...)">
+  <input id="r-puntos" placeholder="Puntos">
   <input id="r-sanciones" placeholder="Sanciones">
 
   <button onclick="guardarResultado()">💾 Guardar</button>
 </div>
-
-<input type="file" id="pdfInput" accept="application/pdf" style="display:none">
 
 <div class="footer">
   <img src="logo-gaston.png">
@@ -230,7 +192,6 @@ function render() {
   guardarDatos();
   const grid = document.getElementById("grid");
   const pista = document.getElementById("gridPista");
-
   grid.innerHTML = "";
   pista.innerHTML = "";
 
@@ -250,7 +211,6 @@ function render() {
       clone.onclick = () => abrirFicha(i);
       pista.appendChild(clone);
     }
-
     grid.appendChild(card);
   });
 }
@@ -261,18 +221,30 @@ function mostrarFormularioNuevo() {
   document.getElementById("formulario").style.display = "block";
 }
 
+function editarPiloto() {
+  editandoIndex = seleccionado;
+  const p = competidores[seleccionado];
+  v("n-nombre", p.nombre);
+  v("n-piloto2", p.piloto2);
+  v("n-dorsal", p.dorsal);
+  v("n-categoria", p.categoria);
+  v("n-tipo", p.tipo);
+  v("n-club", p.club);
+  v("n-embarcacion", p.embarcacion);
+  document.getElementById("ficha").style.display = "none";
+  document.getElementById("formulario").style.display = "block";
+}
+
 function limpiarFormulario() {
-  ["n-nombre","n-dorsal","n-categoria","n-piloto2","n-club","n-embarcacion"].forEach(id=>{
-    document.getElementById(id).value="";
-  });
-  document.getElementById("n-tipo").value="Motos de agua";
-  document.getElementById("n-foto").value="";
+  ["n-nombre","n-piloto2","n-dorsal","n-categoria","n-club","n-embarcacion"]
+    .forEach(id => v(id, ""));
+  v("n-tipo","Motos de agua");
+  document.getElementById("n-foto").value = "";
 }
 
 function guardarFormulario() {
   const file = document.getElementById("n-foto").files[0];
   const reader = new FileReader();
-
   reader.onload = e => guardarFinal(e.target.result);
   if (file) reader.readAsDataURL(file);
   else guardarFinal(null);
@@ -282,9 +254,9 @@ function guardarFinal(foto) {
   if (editandoIndex !== null) {
     const p = competidores[editandoIndex];
     p.nombre = n("n-nombre");
+    p.piloto2 = n("n-piloto2");
     p.dorsal = n("n-dorsal");
     p.categoria = n("n-categoria");
-    p.piloto2 = n("n-piloto2");
     p.tipo = n("n-tipo");
     p.club = n("n-club");
     p.embarcacion = n("n-embarcacion");
@@ -292,9 +264,9 @@ function guardarFinal(foto) {
   } else {
     competidores.push({
       nombre: n("n-nombre"),
+      piloto2: n("n-piloto2"),
       dorsal: n("n-dorsal"),
       categoria: n("n-categoria"),
-      piloto2: n("n-piloto2"),
       tipo: n("n-tipo"),
       club: n("n-club"),
       embarcacion: n("n-embarcacion"),
@@ -303,7 +275,6 @@ function guardarFinal(foto) {
       foto: foto || ""
     });
   }
-
   cerrarFormulario();
   render();
 }
@@ -326,8 +297,8 @@ function abrirFicha(i) {
     r.innerHTML += `
       <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
         🗓️ ${res.anio} | 🏁 ${res.competicion} | 📊 ${res.categoria}<br>
-        🥇 Puesto: ${res.puesto} | 🏆 Título: ${res.titulo || "—"}<br>
-        👥 Piloto 2: ${res.piloto2 || "—"} | ⭐ Puntos: ${res.puntos || "—"}
+        🥇 Puesto: ${res.puesto} | 🏆 ${res.titulo || ""}<br>
+        👥 Piloto 2: ${res.piloto2 || "—"} | ⭐ ${res.puntos || ""}
       </div>
     `;
   });
@@ -343,11 +314,9 @@ function guardarResultado() {
     puesto: n("r-puesto"),
     piloto2: n("r-piloto2"),
     titulo: n("r-titulo"),
-    tiempo: n("r-tiempo"),
     puntos: n("r-puntos"),
     sanciones: n("r-sanciones")
   });
-
   cerrarResultadoForm();
   render();
   abrirFicha(seleccionado);
@@ -359,7 +328,7 @@ function toggleEnPista() {
 }
 
 function eliminarPiloto() {
-  if (!confirm("¿Eliminar este competidor y todo su historial?")) return;
+  if (!confirm("¿Eliminar este competidor y su historial?")) return;
   competidores.splice(seleccionado, 1);
   cerrarFicha();
   render();
@@ -378,21 +347,59 @@ function cerrarFicha() {
   document.getElementById("ficha").style.display = "none";
 }
 
-function n(id) { return document.getElementById(id).value; }
-function f(id, txt) { document.getElementById(id).innerText = txt; }
+function mostrarRanking() {
+  let lista = [];
+  competidores.forEach(p => {
+    const total = p.resultados.reduce((s,r)=>{
+      if(r.puesto=="1") return s+100;
+      if(r.puesto=="2") return s+70;
+      if(r.puesto=="3") return s+50;
+      return s+20;
+    },0);
+    lista.push({nombre:p.nombre,puntos:total});
+  });
+  lista.sort((a,b)=>b.puntos-a.puntos);
+  alert("🏆 Ranking Histórico\n\n" + lista.map((p,i)=>`${i+1}. ${p.nombre} — ${p.puntos}`).join("\n"));
+}
+
+function pantallaPublico() {
+  const w = window.open("");
+  w.document.write(`
+    <html><body style="background:black;color:white;font-family:sans-serif;padding:20px">
+    <h1>PALMARÉS HISTÓRICO</h1>
+    <div id="lista"></div>
+    <script>
+      function update(){
+        const d = JSON.parse(localStorage.getItem("rfemData")||"[]");
+        let l=[];
+        d.forEach(p=>{
+          const t=p.resultados.reduce((s,r)=>s+(r.puesto=="1"?100:r.puesto=="2"?70:r.puesto=="3"?50:20),0);
+          l.push({n:p.nombre,p:t});
+        });
+        l.sort((a,b)=>b.p-a.p);
+        const div=document.getElementById("lista");
+        div.innerHTML="";
+        l.slice(0,10).forEach((p,i)=>{
+          div.innerHTML+=\`<div style="font-size:36px;margin:10px">#\${i+1} \${p.n} — 🏆 \${p.p}</div>\`;
+        });
+      }
+      setInterval(update,2000); update();
+    <\/script>
+    </body></html>
+  `);
+}
 
 function exportarBackup() {
   const blob = new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "rfem_backup.json";
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="rfem_backup.json";
   a.click();
 }
 
 function importarBackup() {
-  const i = document.createElement("input");
-  i.type="file";
-  i.accept="application/json";
+  const i=document.createElement("input");
+  i.type="file"; i.accept="application/json";
   i.onchange=e=>{
     const r=new FileReader();
     r.onload=()=>{
@@ -403,6 +410,86 @@ function importarBackup() {
   };
   i.click();
 }
+
+function cargarDemo() {
+  if (!confirm("Esto cargará pilotos y palmarés históricos. ¿Continuar?")) return;
+
+  const datos = [
+    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","11","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Motos de Agua - Circuito","Ski Division","13","Jose Jorge Criado Guillén"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","8","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","14","Juan Félix Bravo Aguilar"],
+    ["2005","Internacional","Motos de Agua - Circuito","Runabout Stock (Cto. Europa)","1","Jose Ignacio Armillas Barquero"],
+    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","2","Ricardo Masabeu / David Téllez"],
+    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","3","Jose Pedro Martínez / Nicolas Martín"],
+    ["2005","Nacional","Motos de Agua - Circuito","Ski Stock (Copa del Rey)","1","Jose Jorge Criado Guillén"],
+    ["2005","Nacional","Motos de Agua - Circuito","Runabout Stock (Copa del Rey)","1","Israel Amor Gómez"],
+    ["2005","Nacional","Motos de Agua - Resistencia","Runabout F1","1","Miguel Ángel Pino Palomo"],
+    ["2011","Internacional","Endurance Offshore","Clase B (Mundial)","1","Víctor Rivero Alemán / Eugenio Falcón Reyes"],
+    ["2011","Nacional","Motos de Agua - Circuito","Jet Ski F1","1","Nacho Armillas Guardiola"],
+    ["2011","Nacional","Motos de Agua - Circuito","Runabout F1","1","Pablo Lindner Santos"],
+    ["2011","Nacional","Motos de Agua - Offshore","Runabout F1","1","Marco Antonio Vivanco"],
+    ["2013","Internacional","Motos de Agua - Circuito","Ski Division GP2 (Cto. Europa)","1","Ignasi Armillas Guardiola"],
+    ["2013","Internacional","Offshore Endurance","Clase PRO (Mundial)","1","Jose María Izquierdo Vico / Alessandro Pelucca"],
+    ["2013","Internacional","Offshore Endurance","Clase S1 (Mundial)","2","Víctor Rivero Alemán / Eugenio Falcón Reyes"],
+    ["2013","Internacional","Embarcaciones Neumáticas","PR-550 (Copa Mundo)","2","Ricardo Masabeu / David Téllez"],
+    ["2015","Internacional","Motos de Agua - Circuito","Ski GP2 (Cto. Europa)","1","Ignasi Armillas Guardiola"],
+    ["2015","Internacional","Motos de Agua - Circuito","Ski GP1 (Cto. Europa)","2","Ignasi Armillas Guardiola"],
+    ["2017","Internacional","Motos de Agua - Circuito","Ski Junior GP3 (Mundial)","2","Esteban Díaz López"],
+    ["2017","Internacional","Motos de Agua - Circuito","Runabout GP4 (Mundial)","3","Antonio Vingut Rigall"],
+    ["2017","Internacional","Endurance Offshore","Class B PRO (Mundial)","1","Jose Mª Izquierdo / Sergio Pereira"],
+    ["2018","Internacional","Motos de Agua - Circuito","Runabout GP4 (Cto. Europa)","1","Toni Vingut Rigall"],
+    ["2018","Internacional","Motos de Agua - Circuito","Ski GP2 (Mundial)","1","Ignasi Armillas Guardiola"],
+    ["2019","Internacional","Motos de Agua - Circuito","Runabout GP4 (Mundial)","1","Alejandro Prats Palau"],
+    ["2020","Internacional","Endurance Offshore","Class B Promotion (Cto. Europa)","1","Jose Lorenzo Gómez / Yeray Daniel Lorenzo"]
+  ];
+
+  datos.forEach(d=>{
+    let pilotos=d[5];
+    let p1=pilotos, p2="";
+    if(pilotos.includes("/")){
+      const parts=pilotos.split("/");
+      p1=parts[0].trim();
+      p2=parts[1].trim();
+    }
+
+    let piloto=competidores.find(x=>x.nombre.toLowerCase()===p1.toLowerCase());
+    if(!piloto){
+      piloto={
+        nombre:p1,
+        piloto2:p2,
+        dorsal:"",
+        categoria:d[3],
+        tipo:d[2].includes("Embarcaciones")?"Barcos":"Motos de agua",
+        club:"",
+        embarcacion:"",
+        resultados:[],
+        enPista:false,
+        foto:""
+      };
+      competidores.push(piloto);
+    }
+
+    const puesto=d[4];
+    piloto.resultados.push({
+      anio:d[0],
+      competicion:d[1]+" - "+d[2],
+      categoria:d[3],
+      puesto:puesto,
+      piloto2:p2,
+      titulo: puesto=="1"?"Campeón":puesto=="2"?"Subcampeón":puesto=="3"?"Tercero":"",
+      puntos:"",
+      sanciones:""
+    });
+  });
+
+  render();
+  alert("🏆 Palmarés histórico cargado correctamente");
+}
+
+function n(id){return document.getElementById(id).value;}
+function v(id,val){document.getElementById(id).value=val;}
+function f(id,txt){document.getElementById(id).innerText=txt;}
 
 render();
 </script>

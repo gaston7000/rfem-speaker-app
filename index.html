@@ -23,6 +23,7 @@ header {
   flex-wrap: wrap;
   gap: 14px;
   justify-content: center;
+  align-items: center;
   background: rgba(5,10,25,0.7);
   backdrop-filter: blur(8px);
 }
@@ -40,6 +41,16 @@ button {
 button:hover {
   background: #00b4dd;
   transform: scale(1.05);
+}
+
+.search-box {
+  background: white;
+  color: black;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+  border: none;
+  min-width: 240px;
 }
 
 .section-title {
@@ -86,6 +97,7 @@ button:hover {
   display: none;
   padding: 20px;
   overflow-y: auto;
+  z-index: 999;
 }
 
 input, select {
@@ -131,9 +143,16 @@ input, select {
 <header>
   <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
-  <button onclick="cargarDemo()">🏆 Cargar Palmarés Histórico</button>
+  <button onclick="cargarDemo()">🏆 Cargar Palmarés</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
   <button onclick="importarBackup()">☁️ Restaurar</button>
+
+  <input 
+    id="buscador"
+    class="search-box"
+    placeholder="🔍 Buscar por nombre o dorsal..."
+    oninput="render()"
+  >
 </header>
 
 <h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
@@ -226,6 +245,15 @@ function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
+function filtroBusqueda(p) {
+  const q = document.getElementById("buscador").value.toLowerCase();
+  if (!q) return true;
+  return (
+    (p.nombre && p.nombre.toLowerCase().includes(q)) ||
+    (p.dorsal && p.dorsal.toLowerCase().includes(q))
+  );
+}
+
 function render() {
   guardarDatos();
   const grid = document.getElementById("grid");
@@ -236,7 +264,7 @@ function render() {
   pista.innerHTML = "";
   parrilla.innerHTML = "";
 
-  competidores.forEach((p, i) => {
+  competidores.filter(filtroBusqueda).forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "card" + (p.enPista ? " en-pista" : "");
     card.innerHTML = `
@@ -483,10 +511,7 @@ function cargarDemo() {
     ["2005","Internacional","Motos de Agua - Circuito","Runabout 1200","14","Juan Félix Bravo Aguilar"],
     ["2005","Internacional","Motos de Agua - Circuito","Runabout Stock (Cto. Europa)","1","Jose Ignacio Armillas Barquero"],
     ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","2","Ricardo Masabeu / David Téllez"],
-    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","3","Jose Pedro Martínez / Nicolas Martín"],
-    ["2005","Nacional","Motos de Agua - Circuito","Ski Stock (Copa del Rey)","1","Jose Jorge Criado Guillén"],
-    ["2005","Nacional","Motos de Agua - Circuito","Runabout Stock (Copa del Rey)","1","Israel Amor Gómez"],
-    ["2005","Nacional","Motos de Agua - Resistencia","Runabout F1","1","Miguel Ángel Pino Palomo"]
+    ["2005","Internacional","Embarcaciones Neumáticas","PR-550 (Mundial)","3","Jose Pedro Martínez / Nicolas Martín"]
   ];
 
   datos.forEach(d=>{

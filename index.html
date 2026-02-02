@@ -5,8 +5,6 @@
 <title>RFEM Speaker PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
 <style>
 body {
   margin: 0;
@@ -18,6 +16,7 @@ body {
   background-attachment: fixed;
   color: white;
 }
+
 header {
   padding: 20px;
   display: flex;
@@ -27,6 +26,7 @@ header {
   background: rgba(5,10,25,0.7);
   backdrop-filter: blur(8px);
 }
+
 button {
   background: #00d1ff;
   border: none;
@@ -35,39 +35,56 @@ button {
   font-weight: bold;
   border-radius: 14px;
   cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
 }
-button:hover { background: #00b4dd; transform: scale(1.05); }
-.section-title { text-align:center; font-size:28px; margin:20px; }
+button:hover {
+  background: #00b4dd;
+  transform: scale(1.05);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  margin: 20px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
   gap: 16px;
   padding: 20px;
 }
+
 .card {
   background: rgba(20,30,60,0.9);
   border-radius: 20px;
   padding: 14px;
   text-align: center;
+  transition: transform 0.2s;
 }
 .card:hover { transform: scale(1.05); }
+
 .en-pista {
   border: 4px solid #00ff00;
   box-shadow: 0 0 25px #00ff00;
 }
+
 .card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
   border-radius: 14px;
 }
+
 .dorsal { font-size: 36px; font-weight: bold; }
+
 .categoria {
   padding: 6px 12px;
   border-radius: 10px;
   display: inline-block;
   font-size: 14px;
 }
+
 .overlay {
   position: fixed;
   top: 0; left: 0;
@@ -77,6 +94,7 @@ button:hover { background: #00b4dd; transform: scale(1.05); }
   padding: 20px;
   overflow-y: auto;
 }
+
 input, select {
   width: 100%;
   padding: 12px;
@@ -85,6 +103,24 @@ input, select {
   border: none;
   font-size: 16px;
 }
+
+.timeline {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.timeline-item {
+  min-width: 240px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px #00d1ff;
+}
+
 .footer {
   display: flex;
   justify-content: center;
@@ -122,7 +158,7 @@ input, select {
   <input id="n-nombre" placeholder="Piloto 1 (Nombre completo)">
   <input id="n-piloto2" placeholder="Piloto 2 (Opcional)">
   <input id="n-dorsal" placeholder="Dorsal">
-  <input id="n-categoria" placeholder="Categoría principal">
+  <input id="n-categoria" placeholder="Categoría principal (opcional)">
   <select id="n-tipo">
     <option>Motos de agua</option>
     <option>Barcos</option>
@@ -149,6 +185,12 @@ input, select {
   <p id="f-embarcacion"></p>
 
   <button onclick="toggleEnPista()">🎮 En pista</button>
+
+  <h3>📊 Categorías en las que ha competido</h3>
+  <div id="f-categorias"></div>
+
+  <h3>🗓️ Línea de tiempo deportiva</h3>
+  <div class="timeline" id="f-timeline"></div>
 
   <h3>🏆 Historial de Clasificaciones</h3>
   <div id="f-resultados"></div>
@@ -286,19 +328,54 @@ function abrirFicha(i) {
   f("f-nombre", p.nombre);
   f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
   f("f-dorsal", "Dorsal: " + p.dorsal);
-  f("f-categoria", "Categoría: " + p.categoria);
+  f("f-categoria", "Categoría principal: " + (p.categoria || "—"));
   f("f-tipo", "Tipo: " + p.tipo);
   f("f-club", "Club: " + p.club);
   f("f-embarcacion", "Embarcación: " + p.embarcacion);
 
-  const r = document.getElementById("f-resultados");
-  r.innerHTML = "";
-  p.resultados.forEach(res => {
-    r.innerHTML += `
+  // Categorías únicas
+  const catDiv = document.getElementById("f-categorias");
+  catDiv.innerHTML = "";
+  const categorias = [...new Set(p.resultados.map(r => r.categoria).filter(c => c))];
+  categorias.forEach(cat => {
+    const badge = document.createElement("span");
+    badge.innerText = cat;
+    badge.style.padding = "6px 12px";
+    badge.style.margin = "4px";
+    badge.style.display = "inline-block";
+    badge.style.background = "#00d1ff";
+    badge.style.borderRadius = "12px";
+    badge.style.fontWeight = "bold";
+    badge.style.color = "#000";
+    catDiv.appendChild(badge);
+  });
+
+  // Línea de tiempo
+  const timeline = document.getElementById("f-timeline");
+  timeline.innerHTML = "";
+  const ordenados = [...p.resultados].sort((a,b)=>a.anio-b.anio);
+  ordenados.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "timeline-item";
+    div.innerHTML = `
+      <h3>${r.anio}</h3>
+      <div>${r.categoria}</div>
+      <div>🏁 ${r.competicion}</div>
+      <div>🥇 Puesto: ${r.puesto}</div>
+      <div>🏆 ${r.titulo || ""}</div>
+    `;
+    timeline.appendChild(div);
+  });
+
+  // Resultados detallados
+  const res = document.getElementById("f-resultados");
+  res.innerHTML = "";
+  p.resultados.forEach(resu => {
+    res.innerHTML += `
       <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
-        🗓️ ${res.anio} | 🏁 ${res.competicion} | 📊 ${res.categoria}<br>
-        🥇 Puesto: ${res.puesto} | 🏆 ${res.titulo || ""}<br>
-        👥 Piloto 2: ${res.piloto2 || "—"} | ⭐ ${res.puntos || ""}
+        🗓️ ${resu.anio} | 🏁 ${resu.competicion} | 📊 ${resu.categoria}<br>
+        🥇 Puesto: ${resu.puesto} | 🏆 ${resu.titulo || ""}<br>
+        👥 Piloto 2: ${resu.piloto2 || "—"} | ⭐ ${resu.puntos || ""}
       </div>
     `;
   });

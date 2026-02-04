@@ -5,13 +5,11 @@
 <title>RFEM Speaker PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
 <style>
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg, #0f4c81, #0b1d33);
   color: white;
 }
 
@@ -21,18 +19,20 @@ header {
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(10px);
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
 }
 
 button {
   background: #00d1ff;
   border: none;
-  padding: 14px 18px;
+  padding: 12px 18px;
   font-size: 15px;
   font-weight: bold;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
 }
 button:hover {
   background: #00b4dd;
@@ -42,11 +42,11 @@ button:hover {
 .search-box {
   background: white;
   color: black;
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 15px;
   border: none;
-  min-width: 240px;
+  min-width: 220px;
 }
 
 .section-title {
@@ -55,12 +55,13 @@ button:hover {
   margin: 20px;
 }
 
-.info-box {
-  max-width: 900px;
-  margin: 0 auto;
-  background: rgba(0,0,0,0.4);
-  border-radius: 16px;
-  padding: 20px;
+.categoria-titulo {
+  margin: 30px 20px 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00d1ff;
+  border-left: 6px solid #00d1ff;
+  padding-left: 12px;
 }
 
 .grid {
@@ -71,16 +72,17 @@ button:hover {
 }
 
 .card {
-  background: rgba(20,30,60,0.9);
-  border-radius: 18px;
-  padding: 14px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 16px;
+  padding: 12px;
   text-align: center;
+  transition: transform 0.2s;
 }
 .card:hover { transform: scale(1.05); }
 
 .en-pista {
-  border: 4px solid #00ff00;
-  box-shadow: 0 0 25px #00ff00;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px #00ff00;
 }
 
 .card img {
@@ -90,39 +92,45 @@ button:hover {
   border-radius: 12px;
 }
 
-.dorsal { font-size: 30px; font-weight: bold; }
+.dorsal { font-size: 28px; font-weight: bold; }
 
 .overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(5,10,25,0.95);
+  background: rgba(5,10,25,0.97);
   display: none;
   padding: 20px;
   overflow-y: auto;
   z-index: 999;
 }
 
-input, textarea, select {
+input, select, textarea {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 10px;
   border: none;
-  font-size: 16px;
+  font-size: 15px;
+}
+
+textarea {
+  min-height: 100px;
 }
 
 .timeline {
   display: flex;
   overflow-x: auto;
-  gap: 12px;
+  padding: 10px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .timeline-item {
   min-width: 220px;
   background: rgba(0,0,0,0.5);
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 10px;
   text-align: center;
   box-shadow: 0 0 10px #00d1ff;
 }
@@ -130,6 +138,7 @@ input, textarea, select {
 .footer {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 40px;
   padding: 20px;
   background: rgba(0,0,0,0.6);
@@ -141,37 +150,41 @@ input, textarea, select {
 <body>
 
 <header>
-  <button onclick="mostrarFormularioNuevo()">➕ Nuevo Piloto</button>
-  <button onclick="mostrarRanking()">🏆 Ranking</button>
-  <button onclick="activarImportPDF()">📄 Importar PDF RFEM</button>
+  <button onclick="mostrarFormularioNuevo()">➕ Nuevo Competidor</button>
+  <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="importarPDF()">📄 Importar PDF</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
   <button onclick="importarBackup()">☁️ Restaurar</button>
-  <input id="buscador" class="search-box" placeholder="🔍 Buscar piloto o dorsal" oninput="render()">
+
+  <input 
+    id="buscador"
+    class="search-box"
+    placeholder="🔍 Buscar por nombre o dorsal..."
+    oninput="render()"
+  >
 </header>
 
-<h1 class="section-title">📘 INFORMACIÓN GENERAL</h1>
-<div class="info-box">
-  <textarea id="infoGeneral" placeholder="Notas de competición, reglas, horarios, speakers notes..."
-    oninput="guardarInfo()" style="min-height:120px;"></textarea>
-</div>
+<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
+<div class="grid" id="gridParrilla"></div>
 
 <h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">🏁 TODOS LOS PILOTOS</h1>
-<div class="grid" id="grid"></div>
+<h1 class="section-title">📋 TODOS LOS COMPETIDORES (Por Categoría)</h1>
+<div id="grid"></div>
 
-<!-- FORMULARIO PILOTO -->
+<!-- FORMULARIO -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver</button>
-  <h2>Nuevo Piloto</h2>
+  <h2>Competidor</h2>
 
-  <input id="n-nombre" placeholder="Piloto 1">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+  <input id="n-nombre" placeholder="Piloto 1 (Nombre completo)">
+  <input id="n-piloto2" placeholder="Piloto 2 (Opcional)">
   <input id="n-dorsal" placeholder="Dorsal">
   <input id="n-categoria" placeholder="Categoría principal">
-  <input id="n-club" placeholder="Club / Federación">
-  <textarea id="n-observaciones" placeholder="Observaciones / Notas del speaker"></textarea>
+  <input id="n-club" placeholder="Club / Campeonato">
+  <input id="n-embarcacion" placeholder="Modalidad / Embarcación">
+  <textarea id="n-observaciones" placeholder="Observaciones relevantes para speaker"></textarea>
   <input type="file" id="n-foto" accept="image/*">
 
   <button onclick="guardarFormulario()">💾 Guardar</button>
@@ -181,40 +194,52 @@ input, textarea, select {
 <div id="ficha" class="overlay">
   <button onclick="cerrarFicha()">⬅ Volver</button>
   <button onclick="editarPiloto()">✏️ Editar</button>
+  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
 
   <h2 id="f-nombre"></h2>
   <p id="f-piloto2"></p>
   <p id="f-dorsal"></p>
+  <p id="f-categoria"></p>
   <p id="f-club"></p>
+  <p id="f-embarcacion"></p>
 
   <h3>📝 Observaciones</h3>
-  <div id="f-observaciones"></div>
+  <p id="f-observaciones"></p>
 
   <button onclick="toggleEnPista()">🎮 En pista</button>
+  <button onclick="toggleParrilla(seleccionado)">🏁 A/Q Parrilla</button>
 
-  <h3>🏆 Historial por Categoría y Año</h3>
+  <h3>🏆 Historial Deportivo</h3>
   <div class="timeline" id="f-timeline"></div>
+
+  <button onclick="mostrarResultadoForm()">➕ Añadir Clasificación</button>
 </div>
 
-<input type="file" id="pdfInput" accept="application/pdf" hidden>
+<!-- RESULTADO -->
+<div id="resultadoForm" class="overlay">
+  <button onclick="cerrarResultadoForm()">⬅ Volver</button>
+  <h2>Nueva Clasificación</h2>
+
+  <input id="r-anio" placeholder="Año">
+  <input id="r-competicion" placeholder="Campeonato / Competición">
+  <input id="r-categoria" placeholder="Categoría">
+  <input id="r-puesto" placeholder="Puesto final">
+  <input id="r-piloto2" placeholder="Piloto 2">
+  <input id="r-titulo" placeholder="Título">
+  <input id="r-puntos" placeholder="Puntos">
+
+  <button onclick="guardarResultado()">💾 Guardar</button>
+</div>
 
 <div class="footer">
   <img src="logo-gaston.png">
   <img src="logo-rfem.png">
-  <img src="logo-andalucia.png">
-  <img src="logo-uim.png">
 </div>
 
 <script>
 let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
-
-document.getElementById("infoGeneral").value =
-  localStorage.getItem("rfemInfo") || "";
-
-function guardarInfo() {
-  localStorage.setItem("rfemInfo", document.getElementById("infoGeneral").value);
-}
+let editandoIndex = null;
 
 function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
@@ -224,25 +249,48 @@ function render() {
   guardarDatos();
   const grid = document.getElementById("grid");
   const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
+
   grid.innerHTML = "";
   pista.innerHTML = "";
+  parrilla.innerHTML = "";
 
   const q = document.getElementById("buscador").value.toLowerCase();
+  const filtrados = competidores.filter(p =>
+    !q || p.nombre.toLowerCase().includes(q) || (p.dorsal||"").includes(q)
+  );
 
-  competidores.forEach((p, i) => {
+  const grupos = {};
+  filtrados.forEach(p => {
+    const cat = p.categoria || "Sin categoría";
+    if (!grupos[cat]) grupos[cat] = [];
+    grupos[cat].push(p);
+  });
+
+  filtrados.forEach((p, i) => {
     if (p.enPista) pista.appendChild(crearCard(p, i));
+    if (p.enParrilla) parrilla.appendChild(crearCard(p, i));
+  });
 
-    if (
-      !q ||
-      p.nombre.toLowerCase().includes(q) ||
-      (p.dorsal || "").includes(q)
-    ) {
-      grid.appendChild(crearCard(p, i));
-    }
+  Object.keys(grupos).sort().forEach(cat => {
+    const titulo = document.createElement("div");
+    titulo.className = "categoria-titulo";
+    titulo.innerText = cat;
+    grid.appendChild(titulo);
+
+    const contenedor = document.createElement("div");
+    contenedor.className = "grid";
+
+    grupos[cat].forEach(p => {
+      const index = competidores.indexOf(p);
+      contenedor.appendChild(crearCard(p, index));
+    });
+
+    grid.appendChild(contenedor);
   });
 }
 
-function crearCard(p, i) {
+function crearCard(p, index) {
   const card = document.createElement("div");
   card.className = "card" + (p.enPista ? " en-pista" : "");
   card.innerHTML = `
@@ -250,61 +298,103 @@ function crearCard(p, i) {
     <div>${p.nombre}</div>
     <div class="dorsal">${p.dorsal || ""}</div>
     <div>${p.categoria || ""}</div>
+    <button onclick="toggleParrilla(${index});event.stopPropagation()">
+      ${p.enParrilla ? "➖ Quitar Parrilla" : "➕ A Parrilla"}
+    </button>
   `;
-  card.onclick = () => abrirFicha(i);
+  card.onclick = () => abrirFicha(index);
   return card;
 }
 
 function mostrarFormularioNuevo() {
+  editandoIndex = null;
+  limpiarFormulario();
   document.getElementById("formulario").style.display = "block";
 }
 
-function cerrarFormulario() {
-  document.getElementById("formulario").style.display = "none";
+function editarPiloto() {
+  editandoIndex = seleccionado;
+  const p = competidores[seleccionado];
+  v("n-nombre", p.nombre);
+  v("n-piloto2", p.piloto2);
+  v("n-dorsal", p.dorsal);
+  v("n-categoria", p.categoria);
+  v("n-club", p.club);
+  v("n-embarcacion", p.embarcacion);
+  v("n-observaciones", p.observaciones || "");
+  document.getElementById("ficha").style.display = "none";
+  document.getElementById("formulario").style.display = "block";
+}
+
+function limpiarFormulario() {
+  ["n-nombre","n-piloto2","n-dorsal","n-categoria","n-club","n-embarcacion","n-observaciones"]
+    .forEach(id => v(id, ""));
+  document.getElementById("n-foto").value = "";
 }
 
 function guardarFormulario() {
   const file = document.getElementById("n-foto").files[0];
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = e => guardarFinal(e.target.result);
+  if (file) reader.readAsDataURL(file);
+  else guardarFinal(null);
+}
+
+function guardarFinal(foto) {
+  if (editandoIndex !== null) {
+    const p = competidores[editandoIndex];
+    p.nombre = n("n-nombre");
+    p.piloto2 = n("n-piloto2");
+    p.dorsal = n("n-dorsal");
+    p.categoria = n("n-categoria");
+    p.club = n("n-club");
+    p.embarcacion = n("n-embarcacion");
+    p.observaciones = n("n-observaciones");
+    if (foto) p.foto = foto;
+  } else {
     competidores.push({
       nombre: n("n-nombre"),
       piloto2: n("n-piloto2"),
       dorsal: n("n-dorsal"),
       categoria: n("n-categoria"),
       club: n("n-club"),
+      embarcacion: n("n-embarcacion"),
       observaciones: n("n-observaciones"),
       resultados: [],
-      foto: e.target.result,
-      enPista: false
+      enPista: false,
+      enParrilla: false,
+      foto: foto || ""
     });
-    cerrarFormulario();
-    render();
-  };
-  if (file) reader.readAsDataURL(file);
-  else reader.onload({ target: { result: "" } });
+  }
+  cerrarFormulario();
+  render();
 }
 
 function abrirFicha(i) {
   seleccionado = i;
   const p = competidores[i];
+
   f("f-nombre", p.nombre);
   f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
-  f("f-dorsal", "Dorsal: " + p.dorsal);
-  f("f-club", "Club: " + p.club);
+  f("f-dorsal", "Dorsal: " + (p.dorsal || "—"));
+  f("f-categoria", "Categoría: " + (p.categoria || "—"));
+  f("f-club", "Competición: " + (p.club || "—"));
+  f("f-embarcacion", "Modalidad: " + (p.embarcacion || "—"));
   f("f-observaciones", p.observaciones || "—");
 
   const timeline = document.getElementById("f-timeline");
   timeline.innerHTML = "";
+  const ordenados = [...p.resultados].sort((a,b)=>a.anio-b.anio);
 
-  p.resultados.forEach(r => {
+  ordenados.forEach(r => {
     const div = document.createElement("div");
     div.className = "timeline-item";
     div.innerHTML = `
       <h3>${r.anio}</h3>
       <div>${r.categoria}</div>
+      <div>🏁 ${r.competicion}</div>
       <div>🥇 Puesto: ${r.puesto}</div>
-      <div>⭐ ${r.puntos || ""}</div>
+      <div>🏆 ${r.titulo || ""}</div>
     `;
     timeline.appendChild(div);
   });
@@ -312,97 +402,156 @@ function abrirFicha(i) {
   document.getElementById("ficha").style.display = "block";
 }
 
+function guardarResultado() {
+  competidores[seleccionado].resultados.push({
+    anio: n("r-anio"),
+    competicion: n("r-competicion"),
+    categoria: n("r-categoria"),
+    puesto: n("r-puesto"),
+    piloto2: n("r-piloto2"),
+    titulo: n("r-titulo"),
+    puntos: n("r-puntos")
+  });
+  cerrarResultadoForm();
+  render();
+  abrirFicha(seleccionado);
+}
+
+function toggleEnPista() {
+  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
+  render();
+}
+
+function toggleParrilla(index) {
+  competidores[index].enParrilla = !competidores[index].enParrilla;
+  render();
+}
+
+function eliminarPiloto() {
+  if (!confirm("¿Eliminar este competidor?")) return;
+  competidores.splice(seleccionado, 1);
+  cerrarFicha();
+  render();
+}
+
+function mostrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "block";
+}
+function cerrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "none";
+}
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
 function cerrarFicha() {
   document.getElementById("ficha").style.display = "none";
 }
 
-function toggleEnPista() {
-  competidores[seleccionado].enPista =
-    !competidores[seleccionado].enPista;
-  render();
+function mostrarRanking() {
+  let lista = [];
+  competidores.forEach(p => {
+    const total = p.resultados.reduce((s,r)=>{
+      if(r.puesto=="1") return s+100;
+      if(r.puesto=="2") return s+70;
+      if(r.puesto=="3") return s+50;
+      return s+20;
+    },0);
+    lista.push({nombre:p.nombre,puntos:total});
+  });
+  lista.sort((a,b)=>b.puntos-a.puntos);
+  alert("🏆 Ranking Histórico\n\n" + lista.map((p,i)=>`${i+1}. ${p.nombre} — ${p.puntos}`).join("\n"));
 }
 
-/* ---------------- PDF IMPORTER ---------------- */
+/* ================= PDF IMPORTADOR PRO ================= */
 
-function activarImportPDF() {
-  document.getElementById("pdfInput").click();
+function importarPDF() {
+  const i = document.createElement("input");
+  i.type = "file";
+  i.accept = "application/pdf";
+
+  i.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    const visor = document.createElement("div");
+    visor.className = "overlay";
+    visor.style.display = "block";
+    visor.innerHTML = `
+      <button onclick="this.parentNode.remove()">⬅ Cerrar PDF</button>
+      <h2>📄 PDF RFEM Cargado</h2>
+      <p>Copia filas del PDF y pégalas aquí en formato:</p>
+      <p><b>Año,Ámbito,Modalidad,Categoría,Posición,Piloto(s)</b></p>
+
+      <iframe 
+        src="${url}" 
+        style="width:100%; height:60vh; border-radius:12px; border:none;">
+      </iframe>
+
+      <textarea id="importText" placeholder="Ejemplo:
+2025,Internacional,Motos de Agua,Ski GP4,1,Juan Pérez / Carlos Ruiz"></textarea>
+      <button onclick="importarTextoPlano()">⚡ Importar a la App</button>
+    `;
+    document.body.appendChild(visor);
+  };
+  i.click();
 }
 
-document.getElementById("pdfInput").addEventListener("change", async e => {
-  const file = e.target.files[0];
-  if (!file) return;
+function importarTextoPlano() {
+  const texto = document.getElementById("importText").value.trim();
+  if (!texto) return alert("Pega datos primero");
 
-  const data = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data }).promise;
-
-  let fullText = "";
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const text = await page.getTextContent();
-    text.items.forEach(t => fullText += t.str + "\n");
-  }
-
-  procesarTextoPDF(fullText);
-});
-
-function procesarTextoPDF(texto) {
   const lineas = texto.split("\n");
 
   lineas.forEach(l => {
-    if (l.includes("/") || l.match(/\d+\s+[A-Z]/)) {
-      const partes = l.split(/\s{2,}/);
-      if (partes.length >= 2) {
-        const nombreRaw = partes[1];
-        let p1 = nombreRaw;
-        let p2 = "";
+    const p = l.split(",");
+    if (p.length < 6) return;
 
-        if (nombreRaw.includes("/")) {
-          [p1, p2] = nombreRaw.split("/");
-        }
-
-        competidores.push({
-          nombre: p1.trim(),
-          piloto2: p2.trim(),
-          dorsal: partes[0].trim(),
-          categoria: "Importado PDF",
-          club: partes[2] || "",
-          observaciones: "Importado automáticamente RFEM",
-          resultados: [{
-            anio: new Date().getFullYear(),
-            categoria: "PDF RFEM",
-            puesto: "—",
-            puntos: ""
-          }],
-          foto: "",
-          enPista: false
-        });
-      }
-    }
+    competidores.push({
+      nombre: p[5].split("/")[0].trim(),
+      piloto2: p[5].includes("/") ? p[5].split("/")[1].trim() : "",
+      dorsal: "",
+      categoria: p[3].trim(),
+      club: p[1].trim(),
+      embarcacion: p[2].trim(),
+      observaciones: "Importado desde PDF RFEM",
+      resultados: [{
+        anio: p[0],
+        competicion: p[1],
+        categoria: p[3],
+        puesto: p[4],
+        piloto2: "",
+        titulo: "",
+        puntos: ""
+      }],
+      enPista: false,
+      enParrilla: false,
+      foto: ""
+    });
   });
 
-  alert("✅ PDF importado correctamente");
   render();
+  alert("✅ Datos importados correctamente");
 }
 
-/* ---------------- UTIL ---------------- */
+/* ================= UTILS ================= */
 
 function exportarBackup() {
-  const blob = new Blob([JSON.stringify(competidores, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "rfem_backup.json";
+  const blob = new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="rfem_backup.json";
   a.click();
 }
 
 function importarBackup() {
-  const i = document.createElement("input");
-  i.type = "file";
-  i.accept = "application/json";
-  i.onchange = e => {
-    const r = new FileReader();
-    r.onload = () => {
-      competidores = JSON.parse(r.result);
+  const i=document.createElement("input");
+  i.type="file"; i.accept="application/json";
+  i.onchange=e=>{
+    const r=new FileReader();
+    r.onload=()=>{
+      competidores=JSON.parse(r.result);
       render();
     };
     r.readAsText(e.target.files[0]);
@@ -410,18 +559,9 @@ function importarBackup() {
   i.click();
 }
 
-function mostrarRanking() {
-  let lista = [];
-  competidores.forEach(p => {
-    const pts = p.resultados.reduce((s, r) => s + (parseInt(r.puntos) || 0), 0);
-    lista.push({ nombre: p.nombre, puntos: pts });
-  });
-  lista.sort((a, b) => b.puntos - a.puntos);
-  alert("🏆 Ranking\n\n" + lista.map((p, i) => `${i + 1}. ${p.nombre} — ${p.puntos}`).join("\n"));
-}
-
-function n(id) { return document.getElementById(id).value; }
-function f(id, txt) { document.getElementById(id).innerText = txt; }
+function n(id){return document.getElementById(id).value;}
+function v(id,val){document.getElementById(id).value=val;}
+function f(id,txt){document.getElementById(id).innerText=txt;}
 
 render();
 </script>

@@ -2,119 +2,164 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>RFEM Speaker PRO</title>
+<title>RFEM Speaker PRO – Modo Evento</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root {
-  --azul: #1ec8ff;
-  --fondo1: #0f2027;
-  --fondo2: #203a43;
-  --fondo3: #2c5364;
-}
-
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, var(--fondo1), var(--fondo2), var(--fondo3));
-  color: #fff;
+  background: linear-gradient(135deg, #051937, #003973, #0077b6);
+  background-size: cover;
+  background-attachment: fixed;
+  color: white;
 }
 
+/* HEADER */
 header {
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(6px);
+  align-items: center;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
 }
 
+header img {
+  height: 50px;
+}
+
+/* BOTONES */
 button {
-  background: var(--azul);
+  background: #00d1ff;
   border: none;
-  padding: 12px 16px;
+  padding: 14px 18px;
+  font-size: 16px;
   font-weight: bold;
   border-radius: 14px;
   cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
 }
-button:hover { opacity: 0.85; }
+button:hover {
+  background: #00b4dd;
+  transform: scale(1.05);
+}
 
+/* BUSCADOR */
 .search-box {
-  padding: 12px;
+  background: white;
+  color: black;
+  padding: 12px 16px;
   border-radius: 14px;
+  font-size: 16px;
   border: none;
   min-width: 240px;
 }
 
+/* SECCIONES */
 .section-title {
   text-align: center;
-  font-size: 26px;
-  margin: 20px 0 10px;
+  font-size: 28px;
+  margin: 20px;
+  text-shadow: 0 0 12px rgba(0,209,255,0.5);
 }
 
+/* GRID — 5 COLUMNAS FIJAS */
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
+  gap: 16px;
   padding: 20px;
 }
 
-.card {
-  background: rgba(0,0,0,0.45);
-  border-radius: 18px;
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
+/* RESPONSIVE */
+@media (max-width: 1400px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
 }
-.card.en-pista {
-  outline: 4px solid #00ff88;
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* TARJETAS */
+.card {
+  background: rgba(20,30,60,0.9);
+  border-radius: 20px;
+  padding: 14px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00d1ff;
+}
+
+.en-pista {
+  border: 4px solid #00ff00;
+  box-shadow: 0 0 25px #00ff00;
 }
 
 .card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
-  border-radius: 12px;
-  background: #111;
+  border-radius: 14px;
+  background: #000;
 }
 
 .dorsal {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: bold;
-  color: var(--azul);
 }
 
+/* OVERLAYS */
 .overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5,10,25,0.97);
   display: none;
   padding: 20px;
   overflow-y: auto;
   z-index: 999;
 }
 
-input, textarea {
+/* INPUTS */
+input, select, textarea {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 10px;
   border: none;
+  font-size: 16px;
 }
 
-textarea { min-height: 90px; }
+/* INFO GENERAL */
+.info-box {
+  background: rgba(0,0,0,0.6);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px;
+}
 
+/* FOOTER */
 .footer {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 40px;
-  padding: 16px;
-  background: rgba(0,0,0,0.5);
+  padding: 20px;
+  background: rgba(0,0,0,0.6);
 }
+
 .footer img {
-  height: 48px;
-  object-fit: contain;
+  height: 60px;
+  opacity: 0.9;
 }
 </style>
 </head>
@@ -122,166 +167,260 @@ textarea { min-height: 90px; }
 <body>
 
 <header>
-  <button onclick="nuevoPiloto()">➕ Nuevo piloto</button>
-  <button onclick="mostrarRanking()">🏆 Ranking</button>
-  <input id="buscador" class="search-box" placeholder="Buscar piloto o dorsal" oninput="render()">
+  <img src="logo-gaston.png" alt="Logo Gastón">
+  <strong style="font-size:24px;">RFEM SPEAKER PRO</strong>
+  <img src="logo-rfem.png" alt="Logo RFEM">
+
+  <button onclick="mostrarFormularioNuevo()">➕ Piloto</button>
+  <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="exportarBackup()">☁️ Backup</button>
+  <button onclick="importarBackup()">☁️ Restaurar</button>
+
+  <input id="buscador" class="search-box" placeholder="🔍 Buscar piloto o dorsal" oninput="render()">
 </header>
+
+<!-- INFORMACIÓN GENERAL -->
+<h1 class="section-title">📘 INFORMACIÓN GENERAL DEL EVENTO</h1>
+<div class="info-box">
+  <textarea id="infoGeneral" rows="6" placeholder="Pega aquí información clave del campeonato, horarios, reglas, notas del speaker..."></textarea>
+  <button onclick="guardarInfo()">💾 Guardar Información</button>
+</div>
+
+<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
+<div class="grid" id="gridParrilla"></div>
 
 <h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">🏁 TODOS LOS PILOTOS</h1>
+<h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
 <div class="grid" id="grid"></div>
 
-<!-- FORMULARIO -->
+<!-- FORMULARIO PILOTO -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver</button>
-  <h2>Ficha piloto</h2>
+  <h2>Nuevo / Editar Piloto</h2>
 
-  <input id="f-nombre" placeholder="Piloto 1">
-  <input id="f-piloto2" placeholder="Piloto 2 (opcional)">
-  <input id="f-dorsal" placeholder="Dorsal">
-  <input id="f-categoria" placeholder="Categoría principal">
-  <input id="f-club" placeholder="Club">
-  <input id="f-embarcacion" placeholder="Embarcación">
-  <textarea id="f-observaciones" placeholder="Observaciones para speaker"></textarea>
-  <input type="file" id="f-foto" accept="image/*">
+  <input id="n-nombre" placeholder="Piloto principal">
+  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+  <input id="n-dorsal" placeholder="Dorsal">
+  <input id="n-categoria" placeholder="Categoría principal">
+  <input id="n-club" placeholder="Club / Equipo">
+  <input id="n-embarcacion" placeholder="Embarcación">
+  <textarea id="n-observaciones" placeholder="Observaciones / Info relevante del piloto"></textarea>
+  <input type="file" id="n-foto" accept="image/*">
 
-  <button onclick="guardarPiloto()">💾 Guardar</button>
+  <button onclick="guardarFormulario()">💾 Guardar</button>
 </div>
 
-<!-- FICHA -->
+<!-- FICHA PILOTO -->
 <div id="ficha" class="overlay">
   <button onclick="cerrarFicha()">⬅ Volver</button>
   <button onclick="editarPiloto()">✏️ Editar</button>
-  <button onclick="eliminarPiloto()" style="background:#ff3344">🗑️ Eliminar</button>
+  <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
 
-  <h2 id="v-nombre"></h2>
-  <p id="v-info"></p>
-  <p id="v-obs"></p>
+  <h2 id="f-nombre"></h2>
+  <p id="f-piloto2"></p>
+  <p id="f-dorsal"></p>
+  <p id="f-categoria"></p>
+  <p id="f-club"></p>
+  <p id="f-embarcacion"></p>
+
+  <h3>📝 Observaciones</h3>
+  <p id="f-observaciones"></p>
 
   <button onclick="toggleEnPista()">🎮 En pista</button>
+  <button onclick="toggleParrilla(seleccionado)">🏁 A/Q Parrilla</button>
+
+  <h3>📊 Resultados por Categoría y Año</h3>
+  <div id="f-resultados"></div>
 </div>
 
 <div class="footer">
-  <img src="logo-rfem.png" onerror="this.style.display='none'">
-  <img src="logo-uim.png" onerror="this.style.display='none'">
+  <img src="logo-gaston.png">
+  <img src="logo-rfem.png">
+  <img src="logo-andalucia.png">
+  <img src="logo-uim.png">
 </div>
 
 <script>
-let pilotos = JSON.parse(localStorage.getItem("rfem_pilotos")) || [];
+let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
-let editando = null;
+let editandoIndex = null;
 
-function guardarLS() {
-  localStorage.setItem("rfem_pilotos", JSON.stringify(pilotos));
+/* INFO GENERAL */
+document.getElementById("infoGeneral").value = localStorage.getItem("rfemInfo") || "";
+
+function guardarInfo() {
+  localStorage.setItem("rfemInfo", document.getElementById("infoGeneral").value);
+  alert("Información general guardada");
 }
 
-function nuevoPiloto() {
-  editando = null;
+/* UTILIDADES */
+function guardarDatos() {
+  localStorage.setItem("rfemData", JSON.stringify(competidores));
+}
+
+function filtroBusqueda(p) {
+  const q = document.getElementById("buscador").value.toLowerCase();
+  return !q || 
+    (p.nombre && p.nombre.toLowerCase().includes(q)) || 
+    (p.dorsal && p.dorsal.includes(q));
+}
+
+/* RENDER */
+function render() {
+  guardarDatos();
+  const grid = document.getElementById("grid");
+  const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
+
+  grid.innerHTML = "";
+  pista.innerHTML = "";
+  parrilla.innerHTML = "";
+
+  const filtrados = competidores.filter(filtroBusqueda);
+
+  filtrados.forEach((p, i) => {
+    if (p.enPista) pista.appendChild(crearCard(p, i));
+    if (p.enParrilla) parrilla.appendChild(crearCard(p, i));
+    grid.appendChild(crearCard(p, i));
+  });
+}
+
+/* CARD */
+function crearCard(p, index) {
+  const card = document.createElement("div");
+  card.className = "card" + (p.enPista ? " en-pista" : "");
+  card.innerHTML = `
+    <img src="${p.foto || ''}">
+    <div>${p.nombre}</div>
+    <div class="dorsal">${p.dorsal || ""}</div>
+    <div>${p.categoria || ""}</div>
+  `;
+  card.onclick = () => abrirFicha(index);
+  return card;
+}
+
+/* CRUD */
+function mostrarFormularioNuevo() {
+  editandoIndex = null;
+  limpiarFormulario();
   document.getElementById("formulario").style.display = "block";
 }
 
-function guardarPiloto() {
-  const file = document.getElementById("f-foto").files[0];
+function guardarFormulario() {
+  const file = document.getElementById("n-foto").files[0];
   const reader = new FileReader();
-  reader.onload = e => finalizarGuardado(e.target.result);
+  reader.onload = e => guardarFinal(e.target.result);
   if (file) reader.readAsDataURL(file);
-  else finalizarGuardado(null);
+  else guardarFinal(null);
 }
 
-function finalizarGuardado(foto) {
-  const data = {
-    nombre: f("f-nombre"),
-    piloto2: f("f-piloto2"),
-    dorsal: f("f-dorsal"),
-    categoria: f("f-categoria"),
-    club: f("f-club"),
-    embarcacion: f("f-embarcacion"),
-    observaciones: f("f-observaciones"),
-    foto: foto || "",
-    enPista: false
+function guardarFinal(foto) {
+  const obj = {
+    nombre: n("n-nombre"),
+    piloto2: n("n-piloto2"),
+    dorsal: n("n-dorsal"),
+    categoria: n("n-categoria"),
+    club: n("n-club"),
+    embarcacion: n("n-embarcacion"),
+    observaciones: n("n-observaciones"),
+    resultados: [],
+    enPista: false,
+    enParrilla: false,
+    foto: foto || ""
   };
 
-  if (editando !== null) pilotos[editando] = { ...pilotos[editando], ...data };
-  else pilotos.push(data);
+  if (editandoIndex !== null) {
+    competidores[editandoIndex] = obj;
+  } else {
+    competidores.push(obj);
+  }
 
   cerrarFormulario();
   render();
 }
 
-function render() {
-  guardarLS();
-  const grid = document.getElementById("grid");
-  const pista = document.getElementById("gridPista");
-  grid.innerHTML = pista.innerHTML = "";
-
-  const q = document.getElementById("buscador").value.toLowerCase();
-
-  pilotos.forEach((p, i) => {
-    if (q && !p.nombre.toLowerCase().includes(q) && !p.dorsal.includes(q)) return;
-    const c = document.createElement("div");
-    c.className = "card" + (p.enPista ? " en-pista" : "");
-    c.innerHTML = `
-      <img src="${p.foto}">
-      <div>${p.nombre}</div>
-      <div class="dorsal">${p.dorsal}</div>
-      <div>${p.categoria}</div>
-    `;
-    c.onclick = () => abrirFicha(i);
-    (p.enPista ? pista : grid).appendChild(c);
-  });
-}
-
 function abrirFicha(i) {
   seleccionado = i;
-  const p = pilotos[i];
-  document.getElementById("v-nombre").innerText = p.nombre;
-  document.getElementById("v-info").innerText =
-    `Dorsal ${p.dorsal} · ${p.categoria} · ${p.embarcacion}`;
-  document.getElementById("v-obs").innerText = p.observaciones || "";
+  const p = competidores[i];
+
+  f("f-nombre", p.nombre);
+  f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
+  f("f-dorsal", "Dorsal: " + p.dorsal);
+  f("f-categoria", "Categoría: " + p.categoria);
+  f("f-club", "Club: " + p.club);
+  f("f-embarcacion", "Embarcación: " + p.embarcacion);
+  f("f-observaciones", p.observaciones || "—");
+
+  const res = document.getElementById("f-resultados");
+  res.innerHTML = "";
+
+  p.resultados.forEach(r => {
+    res.innerHTML += `
+      <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
+        🗓️ ${r.anio || ""} | 📊 ${r.categoria || ""}<br>
+        🏁 ${r.competicion || ""}<br>
+        🥇 Puesto: ${r.puesto || ""} | 🏆 ${r.titulo || ""}
+      </div>
+    `;
+  });
+
   document.getElementById("ficha").style.display = "block";
 }
 
-function editarPiloto() {
-  editando = seleccionado;
-  const p = pilotos[editando];
-  set("f-nombre", p.nombre);
-  set("f-piloto2", p.piloto2);
-  set("f-dorsal", p.dorsal);
-  set("f-categoria", p.categoria);
-  set("f-club", p.club);
-  set("f-embarcacion", p.embarcacion);
-  set("f-observaciones", p.observaciones);
-  cerrarFicha();
-  document.getElementById("formulario").style.display = "block";
+function toggleEnPista() {
+  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
+  render();
 }
 
-function toggleEnPista() {
-  pilotos[seleccionado].enPista = !pilotos[seleccionado].enPista;
-  cerrarFicha();
+function toggleParrilla(i) {
+  competidores[i].enParrilla = !competidores[i].enParrilla;
   render();
 }
 
 function eliminarPiloto() {
   if (!confirm("¿Eliminar piloto?")) return;
-  pilotos.splice(seleccionado, 1);
+  competidores.splice(seleccionado, 1);
   cerrarFicha();
   render();
 }
 
-function mostrarRanking() {
-  alert("Ranking básico (demo PRO)");
+/* BACKUP */
+function exportarBackup() {
+  const blob = new Blob([JSON.stringify(competidores,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "rfem_backup.json";
+  a.click();
 }
 
-function cerrarFormulario() {
-  document.getElementById("formulario").style.display = "none";
+function importarBackup() {
+  const i = document.createElement("input");
+  i.type = "file";
+  i.accept = "application/json";
+  i.onchange = e => {
+    const r = new FileReader();
+    r.onload = () => {
+      competidores = JSON.parse(r.result);
+      render();
+    };
+    r.readAsText(e.target.files[0]);
+  };
+  i.click();
 }
-function cerrarFicha() {
-  document.getElementById("ficha").style.display = "none";
+
+/* HELPERS */
+function cerrarFormulario(){document.getElementById("formulario").style.display="none";}
+function cerrarFicha(){document.getElementById("ficha").style.display="none";}
+function limpiarFormulario(){
+  ["n-nombre","n-piloto2","n-dorsal","n-categoria","n-club","n-embarcacion","n-observaciones"]
+  .forEach(id=>v(id,""));
+  document.getElementById("n-foto").value="";
 }
-function f(id){return document.getElementById(id).value;}
-function set(id,v){document.getElementById(id).value=v;}
+function n(id){return document.getElementById(id).value;}
+function v(id,val){document.getElementById(id).value=val;}
+function f(id,txt){document.getElementById(id).innerText=txt;}
 
 render();
 </script>

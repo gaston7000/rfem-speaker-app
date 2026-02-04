@@ -5,32 +5,37 @@
 <title>RFEM Speaker PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<!-- PDF ENGINE -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <style>
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background:
+    linear-gradient(120deg, #08162f, #0a2a44, #03121f);
+  background-size: 300% 300%;
+  animation: bgMove 12s ease infinite;
   color: white;
 }
 
-/* HEADER */
+@keyframes bgMove {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
 header {
+  padding: 16px;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  gap: 12px;
   justify-content: center;
-  gap: 16px;
-  padding: 14px;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
+  align-items: center;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
 }
 
-.logo {
-  height: 50px;
-  opacity: 0.9;
-}
-
-/* BOTONES */
 button {
   background: #00d1ff;
   border: none;
@@ -39,152 +44,220 @@ button {
   font-weight: bold;
   border-radius: 12px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: transform 0.2s, background 0.2s;
 }
-button:hover { transform: scale(1.05); background:#00b4dd; }
+button:hover {
+  background: #00b4dd;
+  transform: scale(1.05);
+}
 
 .search-box {
-  padding: 10px 14px;
+  background: white;
+  color: black;
+  padding: 12px 16px;
   border-radius: 12px;
+  font-size: 15px;
   border: none;
-  min-width: 220px;
+  min-width: 240px;
 }
 
-/* TITULOS */
 .section-title {
   text-align: center;
-  margin: 20px 0 10px;
-  font-size: 24px;
+  font-size: 28px;
+  margin: 20px;
+  color: #00d1ff;
 }
 
-/* GRID */
+.categoria-titulo {
+  margin: 30px 20px 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #00d1ff;
+  border-left: 6px solid #00d1ff;
+  padding-left: 12px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
-  gap: 14px;
+  gap: 16px;
   padding: 20px;
 }
 
 .card {
   background: rgba(20,30,60,0.9);
-  border-radius: 16px;
-  padding: 12px;
+  border-radius: 20px;
+  padding: 14px;
   text-align: center;
-  transition: 0.2s;
+  transition: transform 0.2s;
 }
 .card:hover { transform: scale(1.05); }
 
 .en-pista {
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 15px #00ff00;
+  border: 4px solid #00ff00;
+  box-shadow: 0 0 25px #00ff00;
 }
 
 .card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
-/* OVERLAYS */
+.dorsal { font-size: 32px; font-weight: bold; }
+
 .overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.95);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(5,10,25,0.97);
   display: none;
-  overflow-y: auto;
   padding: 20px;
-  z-index: 1000;
+  overflow-y: auto;
+  z-index: 999;
 }
 
 input, select, textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 10px;
   border-radius: 10px;
   border: none;
   font-size: 15px;
 }
 
-textarea { resize: vertical; min-height: 80px; }
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
 
-/* TIMELINE */
 .timeline {
   display: flex;
-  gap: 12px;
   overflow-x: auto;
+  padding: 10px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .timeline-item {
-  min-width: 200px;
-  background: #111;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 8px #00d1ff;
+  min-width: 240px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 0 10px #00d1ff;
 }
+
+.info-box {
+  background: rgba(0,0,0,0.6);
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px #00d1ff;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 20px;
+  background: rgba(0,0,0,0.6);
+}
+.footer img { height: 60px; opacity: 0.85; }
 </style>
 </head>
 
 <body>
 
 <header>
-  <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTAwIDUwIiBmaWxsPSJ3aGl0ZSI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzAwZDFmZiIvPjx0ZXh0IHg9IjUwIiB5PSIzMiIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5HQVNUT048L3RleHQ+PC9zdmc+" />
-  <h2>RFEM SPEAKER PRO</h2>
-  <img class="logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTAwIDUwIiBmaWxsPSJ3aGl0ZSI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSI1MCIgZmlsbD0iI0ZGMDAwMCIvPjx0ZXh0IHg9IjUwIiB5PSIzMiIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5SRkVNPC90ZXh0Pjwvc3ZnPg==" />
-
-  <button onclick="mostrarFormularioNuevo()">➕ Piloto</button>
+  <button onclick="mostrarFormularioNuevo()">➕ Nuevo Piloto</button>
   <button onclick="mostrarRanking()">📊 Ranking</button>
+  <button onclick="importarPDF()">📥 Importar PDF RFEM</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
-  <button onclick="importarBackup()">📥 Restaurar</button>
+  <button onclick="importarBackup()">☁️ Restaurar</button>
 
-  <input class="search-box" id="buscador" placeholder="Buscar..." oninput="render()">
+  <input 
+    id="buscador"
+    class="search-box"
+    placeholder="🔍 Buscar por nombre o dorsal..."
+    oninput="render()"
+  >
 </header>
 
-<h2 class="section-title">📋 Información General</h2>
-<div class="grid" id="infoGeneral"></div>
+<!-- INFORMACIÓN GENERAL -->
+<div class="info-box">
+  <h2>📘 Información General de Competición</h2>
+  <textarea id="infoGeneral" placeholder="Pega aquí reglamentos, notas de speaker, datos técnicos, briefing de prueba, etc..."></textarea>
+  <button onclick="guardarInfoGeneral()">💾 Guardar Información</button>
+</div>
 
-<h2 class="section-title">🏁 Parrilla de salida</h2>
+<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
 <div class="grid" id="gridParrilla"></div>
 
-<h2 class="section-title">🎮 En pista</h2>
+<h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h2 class="section-title">👥 Todos los pilotos</h2>
-<div class="grid" id="grid"></div>
+<h1 class="section-title">🏁 TODOS LOS COMPETIDORES (Por Categoría)</h1>
+<div id="grid"></div>
 
-<!-- FORMULARIO PILOTO -->
+<!-- FORMULARIO -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver</button>
-  <h2>Nuevo Piloto</h2>
+  <h2>Competidor</h2>
 
-  <input id="n-nombre" placeholder="Nombre completo">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+  <input id="n-nombre" placeholder="Piloto 1 (Nombre completo)">
+  <input id="n-piloto2" placeholder="Piloto 2 (Opcional)">
   <input id="n-dorsal" placeholder="Dorsal">
+
   <select id="n-categoria">
     <option value="">Selecciona categoría</option>
-    <option>Jet Ski GP4</option>
-    <option>Runabout GP0</option>
-    <option>Runabout GP0 Féminas</option>
-    <option>Runabout GP0 Junior</option>
-    <option>Runabout GP4</option>
-    <option>Runabout GP2</option>
-    <option>Runabout GP1</option>
-    <option>Runabout GP3 F2 Atmosféricas</option>
-    <option>Runabout GP3 F1 Atmosféricas</option>
-    <option>Runabout GP2 Promotion</option>
-    <option>Deporte Inclusivo</option>
-    <option>PN Endurance Race</option>
-    <option>Barcos T-850/GT60</option>
-    <option>Barcos GT15</option>
-    <option>Categoría 3.5 CC</option>
-    <option>Categoría 7.5 CC</option>
-    <option>Categoría 15 CC</option>
-    <option>Categoría 35 CC</option>
+
+    <optgroup label="Motos de Agua - CIRCUITO">
+      <option>Jet Ski GP4</option>
+      <option>Runabout GP0</option>
+      <option>Runabout GP0 Féminas</option>
+      <option>Runabout GP0 Junior</option>
+      <option>Runabout GP4</option>
+      <option>Runabout GP2</option>
+    </optgroup>
+
+    <optgroup label="Motos de Agua - RALLYJET">
+      <option>Runabout GP1</option>
+      <option>Runabout GP3 F2 Atmosféricas</option>
+      <option>Runabout GP0</option>
+      <option>Runabout GP4</option>
+      <option>Runabout GP2</option>
+      <option>Runabout GP2 Promotion</option>
+    </optgroup>
+
+    <optgroup label="Motos de Agua - OFFSHORE">
+      <option>Runabout GP1</option>
+      <option>Runabout GP2</option>
+      <option>Runabout GP3 F1 Atmosféricas</option>
+      <option>Runabout GP3 F2 Atmosféricas</option>
+      <option>Runabout GP0</option>
+      <option>Runabout GP2 Promotion</option>
+    </optgroup>
+
+    <optgroup label="Otras Categorías">
+      <option>Deporte Inclusivo</option>
+      <option>PN Endurance Race</option>
+      <option>Barcos T-850 / GT60</option>
+      <option>Barcos GT15</option>
+      <option>RC 3.5cc</option>
+      <option>RC 7.5cc</option>
+      <option>RC 15cc</option>
+      <option>RC 35cc</option>
+    </optgroup>
   </select>
+
   <input id="n-club" placeholder="Club">
-  <input id="n-embarcacion" placeholder="Embarcación">
-  <textarea id="n-observaciones" placeholder="Observaciones / información relevante"></textarea>
+  <input id="n-embarcacion" placeholder="Marca y modelo embarcación">
   <input type="file" id="n-foto" accept="image/*">
+
+  <textarea id="n-observaciones" placeholder="Observaciones / Información relevante del piloto"></textarea>
 
   <button onclick="guardarFormulario()">💾 Guardar</button>
 </div>
@@ -196,194 +269,425 @@ textarea { resize: vertical; min-height: 80px; }
   <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
 
   <h2 id="f-nombre"></h2>
-  <img id="f-foto" style="width:200px;border-radius:12px;margin-bottom:10px">
+  <p id="f-piloto2"></p>
   <p id="f-dorsal"></p>
   <p id="f-categoria"></p>
   <p id="f-club"></p>
   <p id="f-embarcacion"></p>
 
   <h3>📝 Observaciones</h3>
-  <p id="f-observaciones"></p>
+  <div id="f-observaciones"></div>
 
   <button onclick="toggleEnPista()">🎮 En pista</button>
-  <button onclick="toggleParrilla(seleccionado)">🏁 Parrilla</button>
+  <button onclick="toggleParrilla(seleccionado)">🏁 A/Q Parrilla</button>
 
-  <h3>🏆 Resultados por categoría y año</h3>
+  <h3>📊 Categorías en las que ha competido</h3>
+  <div id="f-categorias"></div>
+
+  <h3>🗓️ Historial por Año y Categoría</h3>
+  <div class="timeline" id="f-timeline"></div>
+
+  <h3>🏆 Resultados Detallados</h3>
   <div id="f-resultados"></div>
-
-  <button onclick="mostrarResultadoForm()">➕ Añadir resultado</button>
+  <button onclick="mostrarResultadoForm()">➕ Añadir Clasificación</button>
 </div>
 
 <!-- RESULTADO -->
 <div id="resultadoForm" class="overlay">
   <button onclick="cerrarResultadoForm()">⬅ Volver</button>
-  <h2>Nuevo Resultado</h2>
+  <h2>Nueva Clasificación</h2>
+
   <input id="r-anio" placeholder="Año">
-  <input id="r-competicion" placeholder="Competición">
+  <input id="r-competicion" placeholder="Campeonato / Competición">
   <input id="r-categoria" placeholder="Categoría">
-  <input id="r-puesto" placeholder="Puesto">
-  <input id="r-titulo" placeholder="Título">
+  <input id="r-puesto" placeholder="Puesto final (1,2,3...)">
+  <input id="r-piloto2" placeholder="Piloto 2">
+  <input id="r-titulo" placeholder="Título (Campeón, Subcampeón...)">
+  <input id="r-puntos" placeholder="Puntos">
+  <input id="r-sanciones" placeholder="Sanciones">
+
   <button onclick="guardarResultado()">💾 Guardar</button>
+</div>
+
+<div class="footer">
+  <img src="logo-gaston.png">
+  <img src="logo-rfem.png">
+  <img src="logo-andalucia.png">
+  <img src="logo-uim.png">
 </div>
 
 <script>
 let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
+let infoGeneral = localStorage.getItem("rfemInfo") || "";
 let seleccionado = null;
+let editandoIndex = null;
+
+document.getElementById("infoGeneral").value = infoGeneral;
+
+function guardarInfoGeneral() {
+  infoGeneral = document.getElementById("infoGeneral").value;
+  localStorage.setItem("rfemInfo", infoGeneral);
+  alert("📘 Información general guardada");
+}
 
 function guardarDatos() {
   localStorage.setItem("rfemData", JSON.stringify(competidores));
 }
 
+function filtroBusqueda(p) {
+  const q = document.getElementById("buscador").value.toLowerCase();
+  if (!q) return true;
+  return (
+    (p.nombre && p.nombre.toLowerCase().includes(q)) ||
+    (p.dorsal && p.dorsal.toLowerCase().includes(q))
+  );
+}
+
 function render() {
   guardarDatos();
-  ["grid","gridParrilla","gridPista"].forEach(id => {
-    document.getElementById(id).innerHTML = "";
+  const grid = document.getElementById("grid");
+  const pista = document.getElementById("gridPista");
+  const parrilla = document.getElementById("gridParrilla");
+
+  grid.innerHTML = "";
+  pista.innerHTML = "";
+  parrilla.innerHTML = "";
+
+  const filtrados = competidores.filter(filtroBusqueda);
+
+  const grupos = {};
+  filtrados.forEach(p => {
+    const cat = p.categoria || "Sin categoría";
+    if (!grupos[cat]) grupos[cat] = [];
+    grupos[cat].push(p);
   });
 
-  const q = document.getElementById("buscador").value.toLowerCase();
+  filtrados.forEach((p, i) => {
+    if (p.enPista) pista.appendChild(crearCard(p, i));
+    if (p.enParrilla) parrilla.appendChild(crearCard(p, i));
+  });
 
-  competidores.forEach((p,i)=>{
-    if(q && !p.nombre.toLowerCase().includes(q)) return;
+  Object.keys(grupos).sort().forEach(cat => {
+    const titulo = document.createElement("div");
+    titulo.className = "categoria-titulo";
+    titulo.innerText = cat;
+    grid.appendChild(titulo);
 
-    const card = crearCard(p,i);
-    document.getElementById("grid").appendChild(card);
+    const contenedor = document.createElement("div");
+    contenedor.className = "grid";
 
-    if(p.enParrilla)
-      document.getElementById("gridParrilla").appendChild(crearCard(p,i));
-    if(p.enPista)
-      document.getElementById("gridPista").appendChild(crearCard(p,i));
+    grupos[cat].forEach(p => {
+      const index = competidores.indexOf(p);
+      contenedor.appendChild(crearCard(p, index));
+    });
+
+    grid.appendChild(contenedor);
   });
 }
 
-function crearCard(p,i){
-  const c = document.createElement("div");
-  c.className = "card"+(p.enPista?" en-pista":"");
-  c.innerHTML = `
-    <img src="${p.foto || 'https://via.placeholder.com/300x200?text=Piloto'}">
-    <strong>${p.nombre}</strong><br>
-    🏷️ ${p.dorsal || ""}<br>
-    📊 ${p.categoria || ""}
-    <br><br>
-    <button onclick="toggleParrilla(${i});event.stopPropagation()">
-      ${p.enParrilla?"➖ Parrilla":"➕ Parrilla"}
+function crearCard(p, index) {
+  const card = document.createElement("div");
+  card.className = "card" + (p.enPista ? " en-pista" : "");
+  card.innerHTML = `
+    <img src="${p.foto || ''}">
+    <div>${p.nombre}</div>
+    <div class="dorsal">${p.dorsal || ""}</div>
+    <div>${p.categoria || ""}</div>
+    <button onclick="toggleParrilla(${index});event.stopPropagation()">
+      ${p.enParrilla ? "➖ Quitar Parrilla" : "➕ A Parrilla"}
     </button>
   `;
-  c.onclick = ()=>abrirFicha(i);
-  return c;
+  card.onclick = () => abrirFicha(index);
+  return card;
 }
 
-function mostrarFormularioNuevo(){
-  document.getElementById("formulario").style.display="block";
-}
+/* ================= PDF IMPORT ================= */
+async function importarPDF() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/pdf";
 
-function guardarFormulario(){
-  const file=document.getElementById("n-foto").files[0];
-  const reader=new FileReader();
-  reader.onload=e=>{
-    competidores.push({
-      nombre:n("n-nombre"),
-      dorsal:n("n-dorsal"),
-      categoria:n("n-categoria"),
-      club:n("n-club"),
-      embarcacion:n("n-embarcacion"),
-      observaciones:n("n-observaciones"),
-      foto:e.target.result,
-      resultados:[],
-      enPista:false,
-      enParrilla:false
-    });
-    cerrarFormulario();
-    render();
+  input.onchange = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+
+    let textoCompleto = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      content.items.forEach(item => {
+        textoCompleto += item.str + " ";
+      });
+    }
+
+    procesarTextoRFEM(textoCompleto);
   };
-  if(file) reader.readAsDataURL(file);
-  else reader.onload({target:{result:""}});
+
+  input.click();
 }
 
-function abrirFicha(i){
-  seleccionado=i;
-  const p=competidores[i];
-  f("f-nombre",p.nombre);
-  document.getElementById("f-foto").src=p.foto||"https://via.placeholder.com/300x200";
-  f("f-dorsal","Dorsal: "+(p.dorsal||""));
-  f("f-categoria","Categoría: "+(p.categoria||""));
-  f("f-club","Club: "+(p.club||""));
-  f("f-embarcacion","Embarcación: "+(p.embarcacion||""));
-  f("f-observaciones",p.observaciones||"—");
+function procesarTextoRFEM(texto) {
+  const lineas = texto.split(/\s{2,}|\n/);
+  let categoriaActual = "RFEM";
+  let importados = 0;
+  const anio = new Date().getFullYear();
 
-  const r=document.getElementById("f-resultados");
-  r.innerHTML="";
-  p.resultados.forEach(res=>{
-    r.innerHTML+=`<div>📅 ${res.anio} | 📊 ${res.categoria} | 🏁 ${res.competicion} | 🏆 ${res.titulo||""}</div>`;
+  lineas.forEach(linea => {
+    linea = linea.trim();
+
+    if (linea.toUpperCase().includes("RUNABOUT") || linea.toUpperCase().includes("GP")) {
+      categoriaActual = linea;
+    }
+
+    const match = linea.match(/^(\d+)\s+(\d+)\s+([A-Za-zÁÉÍÓÚÑ\s]+)\s+(.*)\s+(\d+)$/);
+    if (!match) return;
+
+    const puesto = match[1];
+    const dorsal = match[2];
+    const nombre = match[3].trim();
+    const puntos = match[5];
+
+    let piloto = competidores.find(p => p.nombre === nombre);
+
+    if (!piloto) {
+      piloto = {
+        nombre,
+        piloto2: "",
+        dorsal,
+        categoria: categoriaActual,
+        tipo: "Motos de agua",
+        club: "",
+        embarcacion: "",
+        resultados: [],
+        observaciones: "",
+        enPista: false,
+        enParrilla: false,
+        foto: ""
+      };
+      competidores.push(piloto);
+    }
+
+    piloto.resultados.push({
+      anio,
+      competicion: "RFEM PDF Importado",
+      categoria: categoriaActual,
+      puesto,
+      puntos,
+      sanciones: "",
+      piloto2: "",
+      titulo: puesto === "1" ? "Campeón" : ""
+    });
+
+    importados++;
   });
 
-  document.getElementById("ficha").style.display="block";
+  guardarDatos();
+  render();
+  alert("📄 PDF importado correctamente\n\nResultados cargados: " + importados);
 }
 
-function guardarResultado(){
+/* ============== CRUD ============== */
+function mostrarFormularioNuevo() {
+  editandoIndex = null;
+  limpiarFormulario();
+  document.getElementById("formulario").style.display = "block";
+}
+
+function editarPiloto() {
+  editandoIndex = seleccionado;
+  const p = competidores[seleccionado];
+  v("n-nombre", p.nombre);
+  v("n-piloto2", p.piloto2);
+  v("n-dorsal", p.dorsal);
+  v("n-categoria", p.categoria);
+  v("n-club", p.club);
+  v("n-embarcacion", p.embarcacion);
+  v("n-observaciones", p.observaciones || "");
+  document.getElementById("ficha").style.display = "none";
+  document.getElementById("formulario").style.display = "block";
+}
+
+function limpiarFormulario() {
+  ["n-nombre","n-piloto2","n-dorsal","n-club","n-embarcacion","n-observaciones"]
+    .forEach(id => v(id, ""));
+  v("n-categoria","");
+  document.getElementById("n-foto").value = "";
+}
+
+function guardarFormulario() {
+  const file = document.getElementById("n-foto").files[0];
+  const reader = new FileReader();
+  reader.onload = e => guardarFinal(e.target.result);
+  if (file) reader.readAsDataURL(file);
+  else guardarFinal(null);
+}
+
+function guardarFinal(foto) {
+  if (editandoIndex !== null) {
+    const p = competidores[editandoIndex];
+    p.nombre = n("n-nombre");
+    p.piloto2 = n("n-piloto2");
+    p.dorsal = n("n-dorsal");
+    p.categoria = n("n-categoria");
+    p.club = n("n-club");
+    p.embarcacion = n("n-embarcacion");
+    p.observaciones = n("n-observaciones");
+    if (foto) p.foto = foto;
+  } else {
+    competidores.push({
+      nombre: n("n-nombre"),
+      piloto2: n("n-piloto2"),
+      dorsal: n("n-dorsal"),
+      categoria: n("n-categoria"),
+      tipo: "Motos de agua",
+      club: n("n-club"),
+      embarcacion: n("n-embarcacion"),
+      observaciones: n("n-observaciones"),
+      resultados: [],
+      enPista: false,
+      enParrilla: false,
+      foto: foto || ""
+    });
+  }
+  cerrarFormulario();
+  render();
+}
+
+function abrirFicha(i) {
+  seleccionado = i;
+  const p = competidores[i];
+
+  f("f-nombre", p.nombre);
+  f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
+  f("f-dorsal", "Dorsal: " + p.dorsal);
+  f("f-categoria", "Categoría principal: " + (p.categoria || "—"));
+  f("f-club", "Club: " + (p.club || "—"));
+  f("f-embarcacion", "Embarcación: " + (p.embarcacion || "—"));
+  f("f-observaciones", p.observaciones || "—");
+
+  const catDiv = document.getElementById("f-categorias");
+  catDiv.innerHTML = "";
+  const categorias = [...new Set(p.resultados.map(r => r.categoria).filter(c => c))];
+  categorias.forEach(cat => {
+    const badge = document.createElement("span");
+    badge.innerText = cat;
+    badge.style.padding = "6px 12px";
+    badge.style.margin = "4px";
+    badge.style.display = "inline-block";
+    badge.style.background = "#00d1ff";
+    badge.style.borderRadius = "12px";
+    badge.style.fontWeight = "bold";
+    badge.style.color = "#000";
+    catDiv.appendChild(badge);
+  });
+
+  const timeline = document.getElementById("f-timeline");
+  timeline.innerHTML = "";
+  const ordenados = [...p.resultados].sort((a,b)=>a.anio-b.anio);
+  ordenados.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "timeline-item";
+    div.innerHTML = `
+      <h3>${r.anio}</h3>
+      <div>${r.categoria}</div>
+      <div>🏁 ${r.competicion}</div>
+      <div>🥇 Puesto: ${r.puesto}</div>
+      <div>🏆 ${r.titulo || ""}</div>
+      <div>⭐ Puntos: ${r.puntos || ""}</div>
+    `;
+    timeline.appendChild(div);
+  });
+
+  const res = document.getElementById("f-resultados");
+  res.innerHTML = "";
+  p.resultados.forEach(resu => {
+    res.innerHTML += `
+      <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
+        🗓️ ${resu.anio} | 🏁 ${resu.competicion} | 📊 ${resu.categoria}<br>
+        🥇 Puesto: ${resu.puesto} | 🏆 ${resu.titulo || ""} | ⭐ ${resu.puntos || ""}
+      </div>
+    `;
+  });
+
+  document.getElementById("ficha").style.display = "block";
+}
+
+function guardarResultado() {
   competidores[seleccionado].resultados.push({
-    anio:n("r-anio"),
-    competicion:n("r-competicion"),
-    categoria:n("r-categoria"),
-    puesto:n("r-puesto"),
-    titulo:n("r-titulo")
+    anio: n("r-anio"),
+    competicion: n("r-competicion"),
+    categoria: n("r-categoria"),
+    puesto: n("r-puesto"),
+    piloto2: n("r-piloto2"),
+    titulo: n("r-titulo"),
+    puntos: n("r-puntos"),
+    sanciones: n("r-sanciones")
   });
   cerrarResultadoForm();
   render();
   abrirFicha(seleccionado);
 }
 
-function toggleParrilla(i){
-  competidores[i].enParrilla=!competidores[i].enParrilla;
+function toggleEnPista() {
+  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
   render();
 }
 
-function toggleEnPista(){
-  competidores[seleccionado].enPista=!competidores[seleccionado].enPista;
+function toggleParrilla(index) {
+  competidores[index].enParrilla = !competidores[index].enParrilla;
   render();
 }
 
-function cerrarFormulario(){
-  document.getElementById("formulario").style.display="none";
+function eliminarPiloto() {
+  if (!confirm("¿Eliminar este competidor y su historial?")) return;
+  competidores.splice(seleccionado, 1);
+  cerrarFicha();
+  render();
 }
 
-function cerrarFicha(){
-  document.getElementById("ficha").style.display="none";
+function mostrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "block";
+}
+function cerrarResultadoForm() {
+  document.getElementById("resultadoForm").style.display = "none";
+}
+function cerrarFormulario() {
+  document.getElementById("formulario").style.display = "none";
+}
+function cerrarFicha() {
+  document.getElementById("ficha").style.display = "none";
 }
 
-function cerrarResultadoForm(){
-  document.getElementById("resultadoForm").style.display="none";
+function mostrarRanking() {
+  let lista = [];
+  competidores.forEach(p => {
+    const total = p.resultados.reduce((s,r)=>{
+      if(r.puesto=="1") return s+100;
+      if(r.puesto=="2") return s+70;
+      if(r.puesto=="3") return s+50;
+      return s+20;
+    },0);
+    lista.push({nombre:p.nombre,puntos:total});
+  });
+  lista.sort((a,b)=>b.puntos-a.puntos);
+  alert("🏆 Ranking Histórico\n\n" + lista.map((p,i)=>`${i+1}. ${p.nombre} — ${p.puntos}`).join("\n"));
 }
 
-function mostrarResultadoForm(){
-  document.getElementById("resultadoForm").style.display="block";
-}
-
-function mostrarRanking(){
-  let lista=competidores.map(p=>{
-    let pts=0;
-    p.resultados.forEach(r=>{
-      if(r.puesto=="1") pts+=100;
-      else if(r.puesto=="2") pts+=70;
-      else if(r.puesto=="3") pts+=50;
-      else pts+=10;
-    });
-    return {n:p.nombre,p:pts};
-  }).sort((a,b)=>b.p-a.p);
-
-  alert(lista.map((p,i)=>`${i+1}. ${p.n} — ${p.p}`).join("\n"));
-}
-
-function exportarBackup(){
-  const b=new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
+function exportarBackup() {
+  const blob = new Blob([JSON.stringify(competidores,null,2)],{type:"application/json"});
   const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);
+  a.href=URL.createObjectURL(blob);
   a.download="rfem_backup.json";
   a.click();
 }
 
-function importarBackup(){
+function importarBackup() {
   const i=document.createElement("input");
-  i.type="file";
+  i.type="file"; i.accept="application/json";
   i.onchange=e=>{
     const r=new FileReader();
     r.onload=()=>{
@@ -396,7 +700,8 @@ function importarBackup(){
 }
 
 function n(id){return document.getElementById(id).value;}
-function f(id,t){document.getElementById(id).innerText=t;}
+function v(id,val){document.getElementById(id).value=val;}
+function f(id,txt){document.getElementById(id).innerText=txt;}
 
 render();
 </script>

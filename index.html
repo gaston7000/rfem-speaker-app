@@ -66,21 +66,23 @@ button:hover {
   text-shadow: 0 0 12px rgba(0,209,255,0.5);
 }
 
-.categoria-titulo {
-  margin: 30px 20px 10px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #00d1ff;
-  border-left: 6px solid #00d1ff;
-  padding-left: 12px;
-}
-
-/* GRID */
+/* GRID — 5 COLUMNAS FIJAS */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   padding: 20px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1400px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 1024px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* TARJETAS */
@@ -137,24 +139,6 @@ input, select, textarea {
   font-size: 16px;
 }
 
-/* TIMELINE */
-.timeline {
-  display: flex;
-  overflow-x: auto;
-  padding: 10px;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-
-.timeline-item {
-  min-width: 240px;
-  background: rgba(0,0,0,0.5);
-  border-radius: 14px;
-  padding: 12px;
-  text-align: center;
-  box-shadow: 0 0 10px #00d1ff;
-}
-
 /* INFO GENERAL */
 .info-box {
   background: rgba(0,0,0,0.6);
@@ -198,7 +182,7 @@ input, select, textarea {
 <!-- INFORMACIÓN GENERAL -->
 <h1 class="section-title">📘 INFORMACIÓN GENERAL DEL EVENTO</h1>
 <div class="info-box">
-  <textarea id="infoGeneral" rows="6" placeholder="Pega aquí información clave del campeonato, horarios, categorías, notas del speaker, reglas, etc..."></textarea>
+  <textarea id="infoGeneral" rows="6" placeholder="Pega aquí información clave del campeonato, horarios, reglas, notas del speaker..."></textarea>
   <button onclick="guardarInfo()">💾 Guardar Información</button>
 </div>
 
@@ -209,7 +193,7 @@ input, select, textarea {
 <div class="grid" id="gridPista"></div>
 
 <h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
-<div id="grid"></div>
+<div class="grid" id="grid"></div>
 
 <!-- FORMULARIO PILOTO -->
 <div id="formulario" class="overlay">
@@ -278,7 +262,9 @@ function guardarDatos() {
 
 function filtroBusqueda(p) {
   const q = document.getElementById("buscador").value.toLowerCase();
-  return !q || (p.nombre && p.nombre.toLowerCase().includes(q)) || (p.dorsal && p.dorsal.includes(q));
+  return !q || 
+    (p.nombre && p.nombre.toLowerCase().includes(q)) || 
+    (p.dorsal && p.dorsal.includes(q));
 }
 
 /* RENDER */
@@ -373,9 +359,9 @@ function abrirFicha(i) {
   p.resultados.forEach(r => {
     res.innerHTML += `
       <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
-        🗓️ ${r.anio} | 📊 ${r.categoria}<br>
-        🏁 ${r.competicion}<br>
-        🥇 Puesto: ${r.puesto} | 🏆 ${r.titulo || ""}
+        🗓️ ${r.anio || ""} | 📊 ${r.categoria || ""}<br>
+        🏁 ${r.competicion || ""}<br>
+        🥇 Puesto: ${r.puesto || ""} | 🏆 ${r.titulo || ""}
       </div>
     `;
   });

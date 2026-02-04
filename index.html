@@ -10,12 +10,10 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: linear-gradient(135deg, #051937, #003973, #0077b6);
-  background-size: cover;
   background-attachment: fixed;
   color: white;
 }
 
-/* HEADER */
 header {
   padding: 20px;
   display: flex;
@@ -27,11 +25,8 @@ header {
   backdrop-filter: blur(10px);
 }
 
-header img {
-  height: 50px;
-}
+header img { height: 50px; }
 
-/* BOTONES */
 button {
   background: #00d1ff;
   border: none;
@@ -40,33 +35,22 @@ button {
   font-weight: bold;
   border-radius: 14px;
   cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
 }
-button:hover {
-  background: #00b4dd;
-  transform: scale(1.05);
-}
+button:hover { background: #00b4dd; }
 
-/* BUSCADOR */
 .search-box {
-  background: white;
-  color: black;
-  padding: 12px 16px;
+  padding: 12px;
   border-radius: 14px;
-  font-size: 16px;
   border: none;
-  min-width: 240px;
+  font-size: 16px;
 }
 
-/* SECCIONES */
 .section-title {
   text-align: center;
   font-size: 28px;
   margin: 20px;
-  text-shadow: 0 0 12px rgba(0,209,255,0.5);
 }
 
-/* GRID — 5 COLUMNAS FIJAS */
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -74,33 +58,21 @@ button:hover {
   padding: 20px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1400px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-}
-@media (max-width: 1024px) {
-  .grid { grid-template-columns: repeat(3, 1fr); }
-}
-@media (max-width: 600px) {
-  .grid { grid-template-columns: repeat(2, 1fr); }
-}
+@media (max-width: 1400px){ .grid{grid-template-columns:repeat(4,1fr);} }
+@media (max-width: 1024px){ .grid{grid-template-columns:repeat(3,1fr);} }
+@media (max-width: 600px){ .grid{grid-template-columns:repeat(2,1fr);} }
 
-/* TARJETAS */
 .card {
   background: rgba(20,30,60,0.9);
   border-radius: 20px;
   padding: 14px;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px #00d1ff;
+  cursor: pointer;
 }
 
 .en-pista {
   border: 4px solid #00ff00;
-  box-shadow: 0 0 25px #00ff00;
+  box-shadow: 0 0 20px #00ff00;
 }
 
 .card img {
@@ -111,17 +83,11 @@ button:hover {
   background: #000;
 }
 
-.dorsal {
-  font-size: 32px;
-  font-weight: bold;
-}
+.dorsal { font-size: 30px; font-weight: bold; }
 
-/* OVERLAYS */
 .overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(5,10,25,0.97);
   display: none;
   padding: 20px;
@@ -129,8 +95,7 @@ button:hover {
   z-index: 999;
 }
 
-/* INPUTS */
-input, select, textarea {
+input, textarea {
   width: 100%;
   padding: 12px;
   margin-bottom: 10px;
@@ -139,100 +104,66 @@ input, select, textarea {
   font-size: 16px;
 }
 
-/* INFO GENERAL */
-.info-box {
-  background: rgba(0,0,0,0.6);
-  border-radius: 20px;
-  padding: 20px;
-  margin: 20px;
-}
-
-/* FOOTER */
 .footer {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 40px;
   padding: 20px;
   background: rgba(0,0,0,0.6);
 }
-
-.footer img {
-  height: 60px;
-  opacity: 0.9;
-}
+.footer img { height: 60px; }
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="logo-gaston.png" alt="Logo Gastón">
+  <img src="logo-gaston.png">
   <strong style="font-size:24px;">RFEM SPEAKER PRO</strong>
-  <img src="logo-rfem.png" alt="Logo RFEM">
+  <img src="logo-rfem.png">
 
   <button onclick="mostrarFormularioNuevo()">➕ Piloto</button>
-  <button onclick="mostrarRanking()">📊 Ranking</button>
   <button onclick="exportarBackup()">☁️ Backup</button>
   <button onclick="importarBackup()">☁️ Restaurar</button>
 
-  <input id="buscador" class="search-box" placeholder="🔍 Buscar piloto o dorsal" oninput="render()">
+  <input id="buscador" class="search-box" placeholder="Buscar..." oninput="render()">
 </header>
-
-<!-- INFORMACIÓN GENERAL -->
-<h1 class="section-title">📘 INFORMACIÓN GENERAL DEL EVENTO</h1>
-<div class="info-box">
-  <textarea id="infoGeneral" rows="6" placeholder="Pega aquí información clave del campeonato, horarios, reglas, notas del speaker..."></textarea>
-  <button onclick="guardarInfo()">💾 Guardar Información</button>
-</div>
-
-<h1 class="section-title">🏁 PARRILLA DE SALIDA</h1>
-<div class="grid" id="gridParrilla"></div>
 
 <h1 class="section-title">🎮 PILOTOS EN PISTA</h1>
 <div class="grid" id="gridPista"></div>
 
-<h1 class="section-title">🏁 TODOS LOS COMPETIDORES</h1>
+<h1 class="section-title">🏁 TODOS LOS PILOTOS</h1>
 <div class="grid" id="grid"></div>
 
-<!-- FORMULARIO PILOTO -->
+<!-- FORM -->
 <div id="formulario" class="overlay">
   <button onclick="cerrarFormulario()">⬅ Volver</button>
-  <h2>Nuevo / Editar Piloto</h2>
+  <h2>Piloto</h2>
 
-  <input id="n-nombre" placeholder="Piloto principal">
-  <input id="n-piloto2" placeholder="Piloto 2 (opcional)">
+  <input id="n-nombre" placeholder="Nombre">
+  <input id="n-piloto2" placeholder="Piloto 2">
   <input id="n-dorsal" placeholder="Dorsal">
-  <input id="n-categoria" placeholder="Categoría principal">
-  <input id="n-club" placeholder="Club / Equipo">
+  <input id="n-categoria" placeholder="Categoría">
+  <input id="n-club" placeholder="Club">
   <input id="n-embarcacion" placeholder="Embarcación">
-  <textarea id="n-observaciones" placeholder="Observaciones / Info relevante del piloto"></textarea>
+  <textarea id="n-observaciones" placeholder="Observaciones"></textarea>
   <input type="file" id="n-foto" accept="image/*">
 
   <button onclick="guardarFormulario()">💾 Guardar</button>
 </div>
 
-<!-- FICHA PILOTO -->
+<!-- FICHA -->
 <div id="ficha" class="overlay">
   <button onclick="cerrarFicha()">⬅ Volver</button>
   <button onclick="editarPiloto()">✏️ Editar</button>
   <button onclick="eliminarPiloto()" style="background:#ff0033">🗑️ Eliminar</button>
 
   <h2 id="f-nombre"></h2>
-  <p id="f-piloto2"></p>
   <p id="f-dorsal"></p>
   <p id="f-categoria"></p>
-  <p id="f-club"></p>
-  <p id="f-embarcacion"></p>
-
-  <h3>📝 Observaciones</h3>
   <p id="f-observaciones"></p>
 
-  <button onclick="toggleEnPista()">🎮 En pista</button>
-  <button onclick="toggleParrilla(seleccionado)">🏁 A/Q Parrilla</button>
-
-  <h3>📊 Resultados por Categoría y Año</h3>
-  <div id="f-resultados"></div>
+  <button onclick="toggleEnPista()">🎮 En pista / Quitar</button>
 </div>
 
 <div class="footer">
@@ -247,183 +178,124 @@ let competidores = JSON.parse(localStorage.getItem("rfemData")) || [];
 let seleccionado = null;
 let editandoIndex = null;
 
-/* INFO GENERAL */
-document.getElementById("infoGeneral").value = localStorage.getItem("rfemInfo") || "";
+function guardarDatos(){localStorage.setItem("rfemData",JSON.stringify(competidores));}
 
-function guardarInfo() {
-  localStorage.setItem("rfemInfo", document.getElementById("infoGeneral").value);
-  alert("Información general guardada");
-}
-
-/* UTILIDADES */
-function guardarDatos() {
-  localStorage.setItem("rfemData", JSON.stringify(competidores));
-}
-
-function filtroBusqueda(p) {
-  const q = document.getElementById("buscador").value.toLowerCase();
-  return !q || 
-    (p.nombre && p.nombre.toLowerCase().includes(q)) || 
-    (p.dorsal && p.dorsal.includes(q));
-}
-
-/* RENDER */
-function render() {
+function render(){
   guardarDatos();
-  const grid = document.getElementById("grid");
-  const pista = document.getElementById("gridPista");
-  const parrilla = document.getElementById("gridParrilla");
+  grid.innerHTML="";
+  gridPista.innerHTML="";
 
-  grid.innerHTML = "";
-  pista.innerHTML = "";
-  parrilla.innerHTML = "";
+  const q = buscador.value.toLowerCase();
 
-  const filtrados = competidores.filter(filtroBusqueda);
-
-  filtrados.forEach((p, i) => {
-    if (p.enPista) pista.appendChild(crearCard(p, i));
-    if (p.enParrilla) parrilla.appendChild(crearCard(p, i));
-    grid.appendChild(crearCard(p, i));
+  competidores.forEach((p,i)=>{
+    if(q && !p.nombre.toLowerCase().includes(q) && !p.dorsal.includes(q)) return;
+    const c = crearCard(p,i);
+    grid.appendChild(c);
+    if(p.enPista) gridPista.appendChild(crearCard(p,i));
   });
 }
 
-/* CARD */
-function crearCard(p, index) {
-  const card = document.createElement("div");
-  card.className = "card" + (p.enPista ? " en-pista" : "");
-  card.innerHTML = `
-    <img src="${p.foto || ''}">
+function crearCard(p,i){
+  const d=document.createElement("div");
+  d.className="card"+(p.enPista?" en-pista":"");
+  d.innerHTML=`
+    <img src="${p.foto||""}">
     <div>${p.nombre}</div>
-    <div class="dorsal">${p.dorsal || ""}</div>
-    <div>${p.categoria || ""}</div>
-  `;
-  card.onclick = () => abrirFicha(index);
-  return card;
+    <div class="dorsal">${p.dorsal||""}</div>
+    <div>${p.categoria||""}</div>`;
+  d.onclick=()=>abrirFicha(i);
+  return d;
 }
 
-/* CRUD */
-function mostrarFormularioNuevo() {
-  editandoIndex = null;
+function mostrarFormularioNuevo(){
+  editandoIndex=null;
   limpiarFormulario();
-  document.getElementById("formulario").style.display = "block";
+  formulario.style.display="block";
 }
 
-function guardarFormulario() {
-  const file = document.getElementById("n-foto").files[0];
-  const reader = new FileReader();
-  reader.onload = e => guardarFinal(e.target.result);
-  if (file) reader.readAsDataURL(file);
-  else guardarFinal(null);
+function editarPiloto(){
+  editandoIndex=seleccionado;
+  const p=competidores[seleccionado];
+  ["nombre","piloto2","dorsal","categoria","club","embarcacion","observaciones"]
+    .forEach(k=>document.getElementById("n-"+k).value=p[k]||"");
+  formulario.style.display="block";
+  ficha.style.display="none";
 }
 
-function guardarFinal(foto) {
-  const obj = {
-    nombre: n("n-nombre"),
-    piloto2: n("n-piloto2"),
-    dorsal: n("n-dorsal"),
-    categoria: n("n-categoria"),
-    club: n("n-club"),
-    embarcacion: n("n-embarcacion"),
-    observaciones: n("n-observaciones"),
-    resultados: [],
-    enPista: false,
-    enParrilla: false,
-    foto: foto || ""
-  };
+function guardarFormulario(){
+  const p=editandoIndex!==null?competidores[editandoIndex]:{};
+  Object.assign(p,{
+    nombre:n("n-nombre"),
+    piloto2:n("n-piloto2"),
+    dorsal:n("n-dorsal"),
+    categoria:n("n-categoria"),
+    club:n("n-club"),
+    embarcacion:n("n-embarcacion"),
+    observaciones:n("n-observaciones"),
+    enPista:p.enPista||false,
+    foto:p.foto||""
+  });
 
-  if (editandoIndex !== null) {
-    competidores[editandoIndex] = obj;
-  } else {
-    competidores.push(obj);
-  }
+  const f=n("n-foto");
+  if(f.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{p.foto=e.target.result;finalizar(p);}
+    r.readAsDataURL(f.files[0]);
+  } else finalizar(p);
+}
 
+function finalizar(p){
+  if(editandoIndex===null) competidores.push(p);
   cerrarFormulario();
   render();
 }
 
-function abrirFicha(i) {
-  seleccionado = i;
-  const p = competidores[i];
-
-  f("f-nombre", p.nombre);
-  f("f-piloto2", "Piloto 2: " + (p.piloto2 || "—"));
-  f("f-dorsal", "Dorsal: " + p.dorsal);
-  f("f-categoria", "Categoría: " + p.categoria);
-  f("f-club", "Club: " + p.club);
-  f("f-embarcacion", "Embarcación: " + p.embarcacion);
-  f("f-observaciones", p.observaciones || "—");
-
-  const res = document.getElementById("f-resultados");
-  res.innerHTML = "";
-
-  p.resultados.forEach(r => {
-    res.innerHTML += `
-      <div style="margin-bottom:10px;padding:10px;background:#112;border-radius:10px">
-        🗓️ ${r.anio || ""} | 📊 ${r.categoria || ""}<br>
-        🏁 ${r.competicion || ""}<br>
-        🥇 Puesto: ${r.puesto || ""} | 🏆 ${r.titulo || ""}
-      </div>
-    `;
-  });
-
-  document.getElementById("ficha").style.display = "block";
+function abrirFicha(i){
+  seleccionado=i;
+  const p=competidores[i];
+  f("f-nombre",p.nombre);
+  f("f-dorsal","Dorsal: "+p.dorsal);
+  f("f-categoria","Categoría: "+p.categoria);
+  f("f-observaciones",p.observaciones||"—");
+  ficha.style.display="block";
 }
 
-function toggleEnPista() {
-  competidores[seleccionado].enPista = !competidores[seleccionado].enPista;
+function toggleEnPista(){
+  competidores[seleccionado].enPista=!competidores[seleccionado].enPista;
   render();
 }
 
-function toggleParrilla(i) {
-  competidores[i].enParrilla = !competidores[i].enParrilla;
-  render();
+function eliminarPiloto(){
+  if(confirm("¿Eliminar piloto?")){
+    competidores.splice(seleccionado,1);
+    cerrarFicha();render();
+  }
 }
 
-function eliminarPiloto() {
-  if (!confirm("¿Eliminar piloto?")) return;
-  competidores.splice(seleccionado, 1);
-  cerrarFicha();
-  render();
-}
-
-/* BACKUP */
-function exportarBackup() {
-  const blob = new Blob([JSON.stringify(competidores,null,2)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "rfem_backup.json";
+function exportarBackup(){
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(competidores,null,2)]));
+  a.download="rfem_backup.json";
   a.click();
 }
 
-function importarBackup() {
-  const i = document.createElement("input");
-  i.type = "file";
-  i.accept = "application/json";
-  i.onchange = e => {
-    const r = new FileReader();
-    r.onload = () => {
-      competidores = JSON.parse(r.result);
-      render();
-    };
+function importarBackup(){
+  const i=document.createElement("input");
+  i.type="file";i.accept="application/json";
+  i.onchange=e=>{
+    const r=new FileReader();
+    r.onload=()=>{competidores=JSON.parse(r.result);render();}
     r.readAsText(e.target.files[0]);
-  };
-  i.click();
+  };i.click();
 }
 
-/* HELPERS */
-function cerrarFormulario(){document.getElementById("formulario").style.display="none";}
-function cerrarFicha(){document.getElementById("ficha").style.display="none";}
-function limpiarFormulario(){
-  ["n-nombre","n-piloto2","n-dorsal","n-categoria","n-club","n-embarcacion","n-observaciones"]
-  .forEach(id=>v(id,""));
-  document.getElementById("n-foto").value="";
-}
-function n(id){return document.getElementById(id).value;}
-function v(id,val){document.getElementById(id).value=val;}
-function f(id,txt){document.getElementById(id).innerText=txt;}
+function cerrarFormulario(){formulario.style.display="none";}
+function cerrarFicha(){ficha.style.display="none";}
+function limpiarFormulario(){document.querySelectorAll("#formulario input,textarea").forEach(e=>e.value="");}
+function n(id){return document.getElementById(id);}
+function f(id,v){document.getElementById(id).innerText=v;}
 
 render();
 </script>
-
 </body>
 </html>
